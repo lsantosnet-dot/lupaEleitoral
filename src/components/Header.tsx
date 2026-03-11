@@ -23,7 +23,7 @@ export function Header() {
     { name: "Explorar", path: "/explorar", icon: Compass },
     { name: "Ranking", path: "/ranking", icon: LineChart },
     { name: "Alertas", path: "/alertas", icon: Bell },
-    { name: "Perfil", path: "/favoritos", icon: User },
+    { name: "Favoritos", path: "/favoritos", icon: User },
   ]
 
   return (

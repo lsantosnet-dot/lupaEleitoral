@@ -15,7 +15,13 @@ export default async function Favoritos() {
     redirect('/sign-in')
   }
 
-  const token = await getToken({ template: 'supabase' }) || ''
+  let token = ''
+  try {
+    token = await getToken({ template: 'supabase' }) || ''
+  } catch (e) {
+    console.error("Clerk JWT Template 'supabase' not found. Please configure it in Clerk Dashboard.", e);
+  }
+  
   const feed = await getFavoritesFeed(token, user.id)
 
   return (
