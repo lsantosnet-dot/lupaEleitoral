@@ -41,20 +41,22 @@ export async function getPoliticos(cargo?: string) {
     return [];
   }
 
-  // Mapear para incluir dados agregados (simplificado para MVP)
+  // Mapear para incluir dados agregados
   return data.map((p: any) => {
-    // Pegar despesa mais recente ou média (simplificado: pega a primeira da lista)
-    const despesaRecente = p.despesas?.[0]?.valor_total || 0;
+    // Somar todas as despesas
+    const despesas_mes = (p.despesas || []).reduce((acc: number, d: any) => acc + (d.valor_total || 0), 0);
     
-    // Calcular presença %
-    const presencas = p.desempenho?.[0]?.presencas || 0;
-    const ausencias = p.desempenho?.[0]?.ausencias_nao_justificadas || 0;
+    // Somar presenças e ausências
+    const desempenho = p.desempenho || [];
+    const presencas = desempenho.reduce((acc: number, d: any) => acc + (d.presencas || 0), 0);
+    const ausencias = desempenho.reduce((acc: number, d: any) => acc + (d.ausencias_nao_justificadas || 0), 0);
+    
     const total = presencas + ausencias;
     const presenca_pct = total > 0 ? Math.round((presencas / total) * 100) : 0;
 
     return {
       ...p,
-      despesas_mes: despesaRecente,
+      despesas_mes,
       presenca_pct
     };
   });
@@ -82,13 +84,14 @@ export async function getPoliticoById(id: string) {
   }
 
   // Calcular campos agregados
-  const presencas = data.desempenho?.[0]?.presencas || 0;
-  const ausencias = data.desempenho?.[0]?.ausencias_nao_justificadas || 0;
+  const despesas_mes = (data.despesas || []).reduce((acc: number, d: any) => acc + (d.valor_total || 0), 0);
+  
+  const desempenho = data.desempenho || [];
+  const presencas = desempenho.reduce((acc: number, d: any) => acc + (d.presencas || 0), 0);
+  const ausencias = desempenho.reduce((acc: number, d: any) => acc + (d.ausencias_nao_justificadas || 0), 0);
+  
   const total = presencas + ausencias;
   const presenca_pct = total > 0 ? Math.round((presencas / total) * 100) : 0;
-  
-  // Pegar última despesa
-  const despesas_mes = data.despesas?.[0]?.valor_total || 0;
 
   return {
     ...data,
