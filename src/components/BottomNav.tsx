@@ -7,6 +7,10 @@ import { Home, LineChart, Compass, Bell, User } from "lucide-react"
 export function BottomNav() {
   const pathname = usePathname()
 
+  if (pathname === '/sign-in' || pathname === '/sign-up') {
+    return null;
+  }
+
   const tabs = [
     { name: "Início", path: "/", icon: Home },
     { name: "Explorar", path: "/explorar", icon: Compass },
