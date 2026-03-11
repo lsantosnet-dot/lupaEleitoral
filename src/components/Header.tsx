@@ -90,6 +90,7 @@ export function Header() {
             </div>
             <span className="font-bold text-xl tracking-tight text-slate-800">
               Lupa <span className="text-secondary-foreground">Eleitoral</span><span className="text-primary text-sm ml-1">2026</span>
+              <span className="text-[10px] text-slate-400 ml-2 font-normal">v1.0.2</span>
             </span>
           </Link>
         </div>
