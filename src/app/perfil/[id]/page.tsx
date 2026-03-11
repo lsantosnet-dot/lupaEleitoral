@@ -1,29 +1,26 @@
-"use client"
-
-import { use } from "react"
-import { mockData } from "@/lib/mockData"
+import { getPoliticoById } from "@/lib/queries"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { ChevronLeft, Share2, AlertTriangle, FileText, CheckCircle2, Circle } from "lucide-react"
+import { ChevronLeft, Share2, AlertTriangle, FileText, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
-export default function Perfil({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params)
-  const politico = mockData.politicos.find(p => p.id === resolvedParams.id)
+export default async function Perfil({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params
+  const politico = await getPoliticoById(resolvedParams.id)
   
   if (!politico) return notFound()
 
-  const projetos = mockData.projetos_recentes.filter(p => p.autor_id === politico.id)
+  const projetos = politico.projetos || []
 
-  const maxGastoCasa = 45000 // Fake teto
-  const mediaCasa = 38000 // Fake media
-  const gastoPctTeto = (politico.despesas_mes / maxGastoCasa) * 100
+  const maxGastoCasa = 45000 // Mantendo teto mockado para cálculo do termômetro
+  const mediaCasa = 38000 // Mantendo média mockada para cálculo do termômetro
+  const gastoPctTeto = ((politico.despesas_mes || 0) / maxGastoCasa) * 100
   
-  const gastoColor = politico.despesas_mes > mediaCasa ? 'bg-rose-500' : 'bg-emerald-500'
+  const gastoColor = (politico.despesas_mes || 0) > mediaCasa ? 'bg-rose-500' : 'bg-emerald-500'
 
   return (
     <div className="flex flex-col gap-6 p-4 pb-24">
@@ -42,7 +39,7 @@ export default function Perfil({ params }: { params: Promise<{ id: string }> }) 
       <div className="flex flex-col items-center text-center">
         <div className="relative mb-4 inline-block">
           <Avatar className="h-28 w-28 border-4 border-white shadow-xl">
-            <AvatarImage src={politico.foto_url} />
+            <AvatarImage src={politico.foto_url || ''} />
             <AvatarFallback className="text-3xl">{politico.nome_urna[0]}</AvatarFallback>
           </Avatar>
           <div className="absolute bottom-0 right-0 bg-emerald-500 border-2 border-white rounded-full p-1 shadow-sm">
@@ -52,12 +49,12 @@ export default function Perfil({ params }: { params: Promise<{ id: string }> }) 
 
         <h2 className="text-2xl font-bold text-slate-900">{politico.nome_urna}</h2>
         <div className="flex items-center justify-center gap-2 text-sm text-slate-500 mb-4 mt-1">
-          <Badge variant="outline" className="font-medium bg-white">{politico.partido}-{politico.uf}</Badge>
+          <Badge variant="outline" className="font-medium bg-white">{politico.partido_atual}-{politico.uf}</Badge>
           <span>Mandato 2023-2026</span>
         </div>
 
         <div className="flex flex-wrap justify-center gap-2">
-           {politico.tags_ia.map(tag => (
+           {politico.tags_ia && politico.tags_ia.map((tag: string) => (
              <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 text-xs px-3 py-1 font-medium items-center gap-1.5">
                <span className="text-base leading-none pr-0.5">✨</span> {tag}
              </Badge>
@@ -66,11 +63,11 @@ export default function Perfil({ params }: { params: Promise<{ id: string }> }) 
       </div>
 
       {/* Alerta Serenata */}
-      {politico.despesas_mes > mediaCasa && (
+      {(politico.despesas_mes || 0) > mediaCasa && (
         <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex gap-4 items-start shadow-sm mt-2">
            <AlertTriangle className="h-5 w-5 text-rose-500 mt-0.5 shrink-0" />
            <div className="flex-1">
-             <h4 className="font-semibold text-rose-900 text-sm">2 despesas sob investigação</h4>
+             <h4 className="font-semibold text-rose-900 text-sm">Despesas sob investigação</h4>
              <p className="text-xs text-rose-700/80 mt-1 mb-2">Identificado pela Operação Serenata de Amor</p>
              <Button variant="destructive" size="sm" className="h-7 text-xs bg-rose-600">Ver detalhes</Button>
            </div>
@@ -89,7 +86,7 @@ export default function Perfil({ params }: { params: Promise<{ id: string }> }) 
         <CardContent className="p-4 pt-2">
            <div className="flex justify-between items-end mb-2">
              <span className="text-sm text-slate-500 font-medium">Gasto Acumulado</span>
-             <span className="text-xl font-bold text-slate-900">R$ {politico.despesas_mes.toLocaleString('pt-BR')}</span>
+             <span className="text-xl font-bold text-slate-900">R$ {(politico.despesas_mes || 0).toLocaleString('pt-BR')}</span>
            </div>
            
            <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden mt-3 relative">
@@ -110,7 +107,7 @@ export default function Perfil({ params }: { params: Promise<{ id: string }> }) 
 
       {/* Grid Dados Secundários */}
       <div className="grid grid-cols-2 gap-4">
-        {/* Assiduidade Simplificada (Donut estático MVP) */}
+        {/* Assiduidade Simplificada */}
         <Card className="border-slate-200 shadow-sm text-center">
           <CardContent className="p-4 flex flex-col items-center justify-center">
             <h4 className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-3">Assiduidade</h4>
@@ -125,7 +122,7 @@ export default function Perfil({ params }: { params: Promise<{ id: string }> }) 
                 />
                 <path
                   className="text-emerald-500 drop-shadow-sm"
-                  strokeDasharray={`${politico.presenca_pct}, 100`}
+                  strokeDasharray={`${politico.presenca_pct || 0}, 100`}
                   strokeWidth="3"
                   strokeLinecap="round"
                   stroke="currentColor"
@@ -134,14 +131,14 @@ export default function Perfil({ params }: { params: Promise<{ id: string }> }) 
                 />
               </svg>
               <div className="absolute flex flex-col items-center">
-                 <span className="text-lg font-bold text-slate-900">{politico.presenca_pct}%</span>
+                 <span className="text-lg font-bold text-slate-900">{politico.presenca_pct || 0}%</span>
               </div>
             </div>
             <span className="text-[10px] text-slate-500 font-medium">Presença</span>
           </CardContent>
         </Card>
 
-        {/* Patrimônio Simplificado (Gráfico Barras estático MVP) */}
+        {/* Patrimônio Simplificado */}
         <Card className="border-slate-200 shadow-sm text-center flex flex-col justify-between">
           <CardContent className="p-4 flex flex-col items-center justify-center h-full">
             <h4 className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-4">Patrimônio</h4>
@@ -160,7 +157,7 @@ export default function Perfil({ params }: { params: Promise<{ id: string }> }) 
               <span className="text-primary font-bold">2026</span>
             </div>
             <span className="text-[9px] text-emerald-600 font-bold bg-emerald-50 py-0.5 px-2 rounded mt-2 inline-block">
-              +32% crescimento
+               Dados Supabase
             </span>
           </CardContent>
         </Card>
@@ -174,12 +171,12 @@ export default function Perfil({ params }: { params: Promise<{ id: string }> }) 
         </div>
 
         <div className="flex flex-col gap-3">
-          {projetos.map(proj => (
+          {projetos.map((proj: any) => (
             <Card key={proj.id} className="border-slate-200 shadow-sm hover:border-primary/50 transition-colors cursor-pointer group">
               <CardContent className="p-4">
                  <div className="flex justify-between items-start mb-2">
-                   <Badge variant="outline" className="text-[10px] font-bold text-slate-500 bg-slate-50">{proj.numero}</Badge>
-                   <span className="text-xs text-slate-400 font-medium">Há {proj.dias_atras} dias</span>
+                    <Badge variant="outline" className="text-[10px] font-bold text-slate-500 bg-slate-50">{proj.numero_ano}</Badge>
+                    <span className="text-xs text-slate-400 font-medium">{new Date(proj.data_apresentacao).toLocaleDateString('pt-BR')}</span>
                  </div>
                  <h4 className="font-bold text-slate-900 mb-2 leading-tight group-hover:text-primary transition-colors">{proj.titulo}</h4>
                  <div className="bg-amber-50 rounded-lg p-3 border border-amber-100 text-sm relative">

@@ -1,13 +1,12 @@
-import { mockData } from "@/lib/mockData"
+import { getHighlights } from "@/lib/queries"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
-export default function Home() {
-  const assiduos = [...mockData.politicos].sort((a, b) => b.presenca_pct - a.presenca_pct).slice(0, 2)
-  const gastadores = [...mockData.politicos].sort((a, b) => b.despesas_mes - a.despesas_mes).slice(0, 2)
+export default async function Home() {
+  const { assiduos, gastadores } = await getHighlights()
 
   return (
     <div className="flex flex-col gap-6 p-4">

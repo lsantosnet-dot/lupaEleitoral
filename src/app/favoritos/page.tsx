@@ -1,6 +1,6 @@
-import { currentUser } from '@clerk/nextjs/server'
+import { currentUser, auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import { mockData } from '@/lib/mockData'
+import { getFavoritesFeed } from '@/lib/queries'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -9,12 +9,14 @@ import Link from 'next/link'
 
 export default async function Favoritos() {
   const user = await currentUser()
+  const { getToken } = await auth()
 
   if (!user) {
     redirect('/sign-in')
   }
 
-  const feed = mockData.feed_favoritos
+  const token = await getToken({ template: 'supabase' }) || ''
+  const feed = await getFavoritesFeed(token, user.id)
 
   return (
     <div className="flex flex-col gap-6 p-4 pb-24">
