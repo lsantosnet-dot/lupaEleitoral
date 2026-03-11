@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   title: "Lupa Eleitoral 2026",
   description: "Fiscalize seus representantes nas eleições de 2026",
   manifest: "/manifest.json",
+  icons: {
+    apple: "/icon-192x192.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
