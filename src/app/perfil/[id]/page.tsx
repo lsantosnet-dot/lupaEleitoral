@@ -26,9 +26,7 @@ export default async function Perfil({ params }: { params: Promise<{ id: string 
     <div className="flex flex-col gap-6 p-4 pb-24">
       {/* Header Area */}
       <div className="flex items-center justify-between">
-         <Link href="/explorar" className="p-2 -ml-2 text-slate-500 hover:text-slate-900">
-           <ChevronLeft className="h-5 w-5" />
-         </Link>
+         <div className="w-10" /> {/* Spacer to keep title centered if needed, or just let it flow */}
          <h1 className="font-semibold text-sm text-slate-500 uppercase tracking-widest">Perfil Parlamentar</h1>
          <button className="p-2 -mr-2 text-slate-500 hover:text-slate-900">
            <Share2 className="h-5 w-5" />

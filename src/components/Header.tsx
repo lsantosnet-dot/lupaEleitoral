@@ -48,7 +48,8 @@ export function Header() {
                     </AvatarFallback>
                   </Avatar>
                   <h3 className="font-semibold text-lg text-slate-900">{user.fullName}</h3>
-                  <p className="text-sm text-slate-500 mt-1">{user.primaryEmailAddress?.emailAddress}</p>
+                   <p className="text-sm text-slate-500 mt-1">{user.primaryEmailAddress?.emailAddress}</p>
+                   <span className="text-[10px] text-slate-400 mt-2 font-medium bg-slate-100 px-2 py-0.5 rounded-full">v1.0.2</span>
                 </div>
               )}
 
@@ -90,7 +91,6 @@ export function Header() {
             </div>
             <span className="font-bold text-xl tracking-tight text-slate-800">
               Lupa <span className="text-secondary-foreground">Eleitoral</span><span className="text-primary text-sm ml-1">2026</span>
-              <span className="text-[10px] text-slate-400 ml-2 font-normal">v1.0.2</span>
             </span>
           </Link>
         </div>

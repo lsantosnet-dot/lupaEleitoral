@@ -29,7 +29,7 @@ export default async function Favoritos() {
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <UserIcon className="h-6 w-6 text-primary" /> Favoritos
+            <Star className="h-6 w-6 text-primary" /> Favoritos
          </h1>
          <div className="flex gap-3 text-slate-500">
            <Search className="h-5 w-5 hover:text-slate-900 cursor-pointer" />

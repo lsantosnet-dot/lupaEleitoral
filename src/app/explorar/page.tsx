@@ -10,9 +10,6 @@ export default async function Explorar() {
   return (
     <div className="flex flex-col gap-4 p-4 pb-24">
       <div className="flex items-center gap-3">
-        <Link href="/" className="p-2 -ml-2 text-slate-500 hover:text-slate-900">
-           <ChevronLeft className="h-5 w-5" />
-        </Link>
         <h1 className="text-xl font-bold flex-1">Explorar Parlamentares</h1>
       </div>
       
