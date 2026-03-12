@@ -7,7 +7,7 @@ import Link from "next/link"
 
 export default async function RankingPage() {
   const politicos = await getPoliticos();
-  
+
   // Ordenar por presença
   const ranking = [...politicos].sort((a, b) => (b.presenca_pct || 0) - (a.presenca_pct || 0));
 
@@ -15,7 +15,7 @@ export default async function RankingPage() {
     <div className="flex flex-col gap-6 p-4 pb-24">
       <div className="flex items-center gap-3">
         <Link href="/" className="p-2 -ml-2 text-slate-500 hover:text-slate-900">
-           <ChevronLeft className="h-5 w-5" />
+          <ChevronLeft className="h-5 w-5" />
         </Link>
         <h1 className="text-xl font-bold flex-1">Ranking de Assiduidade</h1>
       </div>
@@ -24,15 +24,14 @@ export default async function RankingPage() {
         {ranking.map((p, index) => (
           <Card key={p.id} className="border-slate-200 shadow-sm relative overflow-hidden">
             {index < 3 && (
-              <div className={`absolute top-0 right-0 w-8 h-8 flex items-center justify-center p-1 ${
-                index === 0 ? 'bg-yellow-400' : index === 1 ? 'bg-slate-300' : 'bg-amber-600'
-              } text-white rounded-bl-xl shadow-sm`}>
+              <div className={`absolute top-0 right-0 w-8 h-8 flex items-center justify-center p-1 ${index === 0 ? 'bg-yellow-400' : index === 1 ? 'bg-slate-300' : 'bg-amber-600'
+                } text-white rounded-bl-xl shadow-sm`}>
                 <Trophy className="h-4 w-4" />
               </div>
             )}
             <CardContent className="p-4 flex items-center gap-4">
               <span className="text-lg font-bold text-slate-400 w-6">#{index + 1}</span>
-              
+
               <Avatar className="h-12 w-12 border border-slate-100 shadow-sm">
                 <AvatarImage src={p.foto_url || ''} />
                 <AvatarFallback>{p.nome_urna[0]}</AvatarFallback>
