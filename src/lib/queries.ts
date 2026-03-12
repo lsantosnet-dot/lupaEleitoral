@@ -140,6 +140,65 @@ export async function getUserFavorites(clerkToken: string, userId: string) {
 }
 
 /**
+ * Busca apenas os IDs dos favoritos de um usuário específico
+ */
+export async function getUserFavoriteIds(clerkToken: string, userId: string) {
+  const supabase = createClerkSupabaseClient(clerkToken);
+  
+  const { data, error } = await supabase
+    .from('usuarios_politicos_favoritos')
+    .select('politico_id')
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error("Erro ao buscar IDs de favoritos:", error);
+    return [];
+  }
+
+  return data.map(f => f.politico_id);
+}
+
+/**
+ * Alterna o estado de favorito de um político para o usuário
+ */
+export async function toggleFavorite(clerkToken: string, userId: string, politicoId: string) {
+  const supabase = createClerkSupabaseClient(clerkToken);
+  
+  // Verificar se já é favorito
+  const { data, error: fetchError } = await supabase
+    .from('usuarios_politicos_favoritos')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('politico_id', politicoId)
+    .maybeSingle();
+
+  if (fetchError) {
+    console.error("Erro ao verificar favorito:", fetchError);
+    return { error: fetchError };
+  }
+
+  if (data) {
+    // Se existe, remover
+    const { error: deleteError } = await supabase
+      .from('usuarios_politicos_favoritos')
+      .delete()
+      .eq('id', data.id);
+    
+    return { success: !deleteError, action: 'removed', error: deleteError };
+  } else {
+    // Se não existe, adicionar
+    const { error: insertError } = await supabase
+      .from('usuarios_politicos_favoritos')
+      .insert({
+        user_id: userId,
+        politico_id: politicoId
+      });
+    
+    return { success: !insertError, action: 'added', error: insertError };
+  }
+}
+
+/**
  * Busca o feed de projetos dos favoritos
  */
 export async function getFavoritesFeed(clerkToken: string, userId: string) {

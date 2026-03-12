@@ -10,14 +10,18 @@ import { Badge } from "@/components/ui/badge"
 import { Heart, Search, X, Check, FilterX } from "lucide-react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { Politico } from "@/lib/queries"
+import { useAuth, useUser } from "@clerk/nextjs"
+import { Politico, toggleFavorite } from "@/lib/queries"
 import { cn } from "@/lib/utils"
 
 interface ExplorarContentProps {
   initialPoliticos: Politico[]
+  initialFavoriteIds?: string[]
 }
 
-export function ExplorarContent({ initialPoliticos }: ExplorarContentProps) {
+export function ExplorarContent({ initialPoliticos, initialFavoriteIds = [] }: ExplorarContentProps) {
+  const { getToken } = useAuth()
+  const { user } = useUser()
   const searchParams = useSearchParams()
   const defaultTab = searchParams.get('cargo') === 'senador' ? 'senadores' : 'deputados'
 
@@ -26,6 +30,7 @@ export function ExplorarContent({ initialPoliticos }: ExplorarContentProps) {
   const [selectedUFs, setSelectedUFs] = useState<string[]>([])
   const [selectedPartidos, setSelectedPartidos] = useState<string[]>([])
   const [sortBy, setSortBy] = useState("nome") // nome, assiduidade, gastos
+  const [favoriteIds, setFavoriteIds] = useState<string[]>(initialFavoriteIds)
 
   // State for dropdowns open
   const [openUF, setOpenUF] = useState(false)
@@ -52,6 +57,40 @@ export function ExplorarContent({ initialPoliticos }: ExplorarContentProps) {
     setSelectedUFs([])
     setSelectedPartidos([])
     setSortBy("nome")
+  }
+
+  const handleToggleFavorite = async (politicoId: string) => {
+    if (!user) {
+      // Opcional: Redirecionar para login ou mostrar aviso
+      alert("Você precisa estar logado para favoritar um parlamentar.")
+      return
+    }
+
+    // Optimistic UI
+    const isFavorite = favoriteIds.includes(politicoId)
+    setFavoriteIds(prev => 
+      isFavorite ? prev.filter(id => id !== politicoId) : [...prev, politicoId]
+    )
+
+    try {
+      const token = await getToken({ template: 'supabase' })
+      if (!token) throw new Error("No token")
+      
+      const res = await toggleFavorite(token, user.id, politicoId)
+      if (!res.success) {
+        // Reverter se falhar
+        setFavoriteIds(prev => 
+          isFavorite ? [...prev, politicoId] : prev.filter(id => id !== politicoId)
+        )
+        console.error("Erro ao favoritar:", res.error)
+      }
+    } catch (e) {
+      // Reverter se falhar
+      setFavoriteIds(prev => 
+        isFavorite ? [...prev, politicoId] : prev.filter(id => id !== politicoId)
+      )
+      console.error("Erro ao buscar token ou favoritar:", e)
+    }
   }
 
   const getFilteredAndSortedPoliticos = (cargoFilter: string) => {
@@ -89,11 +128,18 @@ export function ExplorarContent({ initialPoliticos }: ExplorarContentProps) {
     return (
       <div className="flex flex-col gap-4 mt-4">
         {list.map((p) => {
+          const isFavorite = favoriteIds.includes(p.id)
           return (
             <Card key={p.id} className="border-slate-200 shadow-sm overflow-hidden flex flex-col pt-0">
               <CardContent className="p-4 flex gap-4 relative">
-                <button className="absolute top-4 right-4 text-slate-400 hover:text-rose-500 transition-colors">
-                  <Heart className="h-5 w-5" />
+                <button 
+                  onClick={() => handleToggleFavorite(p.id)}
+                  className={cn(
+                    "absolute top-4 right-4 transition-colors p-1 rounded-full hover:bg-slate-50",
+                    isFavorite ? "text-rose-500" : "text-slate-300 hover:text-rose-400"
+                  )}
+                >
+                  <Heart className={cn("h-5 w-5", isFavorite && "fill-current")} />
                 </button>
 
                 <Avatar className="h-14 w-14 border border-slate-100 shadow-sm">
