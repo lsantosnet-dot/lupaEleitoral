@@ -22,8 +22,19 @@ export function FavoritosContent({ initialFavoritos }: FavoritosContentProps) {
     const originalFavoritos = [...favoritos]
     setFavoritos(prev => prev.filter(p => p.id !== politicoId))
 
+    let token: string | null = null
     try {
-      const token = await getToken({ template: 'supabase' })
+      token = await getToken({ template: 'supabase' })
+    } catch (e) {
+      console.warn("Erro ao buscar token com template 'supabase' nos favoritos, tentando token padrão:", e)
+      try {
+        token = await getToken()
+      } catch (e2) {
+        console.error("Erro ao buscar qualquer token nos favoritos:", e2)
+      }
+    }
+
+    try {
       const res = await toggleFavorite(token, user.id, politicoId)
       
       if (!res.success || res.action === 'added') {
@@ -32,7 +43,7 @@ export function FavoritosContent({ initialFavoritos }: FavoritosContentProps) {
       }
     } catch (e) {
       setFavoritos(originalFavoritos)
-      console.error("Erro ao remover favorito:", e)
+      console.error("Erro ao executar toggleFavorite nos favoritos:", e)
     }
   }
 

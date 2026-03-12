@@ -179,17 +179,37 @@ export async function getUserFavoriteIds(clerkToken: string | null, userId: stri
  * Alterna o estado de favorito de um político para o usuário
  */
 export async function toggleFavorite(clerkToken: string | null, userId: string, politicoId: string) {
-  const supabase = clerkToken ? createClerkSupabaseClient(clerkToken) : supabasePublic;
+  const supabase = (clerkToken && clerkToken !== "") ? createClerkSupabaseClient(clerkToken) : supabasePublic;
   
-  const tableName = 'Usuarios_Politicos_Favoritos';
+  const tableNames = ['Usuarios_Politicos_Favoritos', 'usuarios_politicos_favoritos'];
 
-  // Verificar se já é favorito
-  const { data, error: fetchError } = await supabase
-    .from(tableName)
-    .select('id')
-    .eq('user_id', userId)
-    .eq('politico_id', politicoId)
-    .maybeSingle();
+  async function tryFetch(name: string) {
+    return await supabase
+      .from(name)
+      .select('id')
+      .eq('user_id', userId)
+      .eq('politico_id', politicoId)
+      .maybeSingle();
+  }
+
+  let data = null;
+  let fetchError = null;
+  let resolvedTableName = tableNames[0];
+
+  const firstAttempt = await tryFetch(tableNames[0]);
+  if (firstAttempt.error && firstAttempt.error.code === '42P01') {
+    const secondAttempt = await tryFetch(tableNames[1]);
+    if (!secondAttempt.error) {
+      data = secondAttempt.data;
+      resolvedTableName = tableNames[1];
+    } else {
+      fetchError = secondAttempt.error;
+    }
+  } else {
+    data = firstAttempt.data;
+    fetchError = firstAttempt.error;
+    resolvedTableName = tableNames[0];
+  }
 
   if (fetchError) {
     console.error("Erro ao verificar favorito:", fetchError);
@@ -199,7 +219,7 @@ export async function toggleFavorite(clerkToken: string | null, userId: string, 
   if (data) {
     // Se existe, remover
     const { error: deleteError } = await supabase
-      .from(tableName)
+      .from(resolvedTableName)
       .delete()
       .eq('id', data.id);
     
@@ -207,13 +227,13 @@ export async function toggleFavorite(clerkToken: string | null, userId: string, 
   } else {
     // Se não existe, adicionar
     const { error: insertError } = await supabase
-      .from(tableName)
+      .from(resolvedTableName)
       .insert({
         user_id: userId,
         politico_id: politicoId
       });
     
-    if (insertError) console.error("Erro ao inserir favorito:", insertError);
+    if (insertError) console.error(`Erro ao inserir favorito na tabela ${resolvedTableName}:`, insertError);
     
     return { success: !insertError, action: 'added', error: insertError };
   }

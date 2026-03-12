@@ -73,10 +73,19 @@ export function ExplorarContent({ initialPoliticos, initialFavoriteIds = [] }: E
       isFavorite ? prev.filter(id => id !== politicoId) : [...prev, politicoId]
     )
 
+    let token: string | null = null
     try {
-      const token = await getToken({ template: 'supabase' })
-      if (!token) throw new Error("No token")
-      
+      token = await getToken({ template: 'supabase' })
+    } catch (e) {
+      console.warn("Erro ao buscar token com template 'supabase', tentando token padrão:", e)
+      try {
+        token = await getToken()
+      } catch (e2) {
+        console.error("Erro ao buscar qualquer token:", e2)
+      }
+    }
+
+    try {
       const res = await toggleFavorite(token, user.id, politicoId)
       if (!res.success) {
         // Reverter se falhar
@@ -90,7 +99,7 @@ export function ExplorarContent({ initialPoliticos, initialFavoriteIds = [] }: E
       setFavoriteIds(prev => 
         isFavorite ? [...prev, politicoId] : prev.filter(id => id !== politicoId)
       )
-      console.error("Erro ao buscar token ou favoritar:", e)
+      console.error("Erro na execução do toggleFavorite:", e)
     }
   }
 
