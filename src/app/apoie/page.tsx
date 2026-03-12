@@ -78,7 +78,7 @@ export default function ApoiePage() {
 
       <div className="mt-auto pb-8 text-center">
         <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">
-          Transparência & Democracia • v1.0.20
+          Transparência & Democracia • v1.0.21
         </p>
       </div>
     </div>

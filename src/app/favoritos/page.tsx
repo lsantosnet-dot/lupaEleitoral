@@ -22,17 +22,6 @@ export default async function Favoritos() {
 
   return (
     <div className="flex flex-col gap-6 p-4 pb-24">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-2">
-         <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Star className="h-6 w-6 text-primary" /> Favoritos
-         </h1>
-         <div className="flex gap-3 text-slate-500">
-           <Search className="h-5 w-5 hover:text-slate-900 cursor-pointer" />
-           <Bell className="h-5 w-5 hover:text-slate-900 cursor-pointer" />
-         </div>
-      </div>
-
       <FavoritosContent initialFavoritos={monitorados} />
 
       <div className="flex gap-2 mb-2 overflow-x-auto pb-2 hide-scrollbar">
