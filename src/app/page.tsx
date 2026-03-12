@@ -42,6 +42,17 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Apoie o projeto link */}
+      <div className="flex justify-center -mt-2">
+        <Link 
+          href="/apoie" 
+          className="text-[10px] text-slate-400 hover:text-primary transition-colors flex items-center gap-1.5"
+        >
+          <span className="h-1 w-1 rounded-full bg-slate-400" />
+          Apoie o projeto
+        </Link>
+      </div>
+
       {/* Acesso Rápido */}
       <section>
         <h2 className="text-lg font-semibold mb-3">Acesso Rápido</h2>
