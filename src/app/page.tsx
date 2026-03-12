@@ -89,11 +89,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Destaques */}
       <section>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-semibold">Destaques do Mês</h2>
-          <Button variant="link" size="sm" className="text-primary h-auto p-0">Ver todos</Button>
         </div>
         
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
