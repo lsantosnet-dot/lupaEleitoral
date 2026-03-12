@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react"
+import React, { createContext, useContext, useState, useEffect, ReactNode, Suspense } from "react"
 import { usePathname, useSearchParams } from "next/navigation"
 import { Loader2 } from "lucide-react"
 
@@ -20,21 +20,29 @@ export const useLoading = () => {
   return context
 }
 
-export const LoadingProvider = ({ children }: { children: ReactNode }) => {
-  const [isLoading, setIsLoading] = useState(false)
+// Separate component for search params that needs Suspense
+function NavigationHandler({ onNavigate }: { onNavigate: () => void }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  useEffect(() => {
+    onNavigate()
+  }, [pathname, searchParams, onNavigate])
+
+  return null
+}
+
+export const LoadingProvider = ({ children }: { children: ReactNode }) => {
+  const [isLoading, setIsLoading] = useState(false)
 
   const startLoading = () => setIsLoading(true)
   const stopLoading = () => setIsLoading(false)
 
-  // Stop loading when pathname or searchParams change
-  useEffect(() => {
-    stopLoading()
-  }, [pathname, searchParams])
-
   return (
     <LoadingContext.Provider value={{ startLoading, stopLoading, isLoading }}>
+      <Suspense fallback={null}>
+        <NavigationHandler onNavigate={stopLoading} />
+      </Suspense>
       {isLoading && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white/60 backdrop-blur-[2px] animate-in fade-in duration-200">
           <div className="bg-white p-4 rounded-2xl shadow-xl border border-slate-100 flex flex-col items-center gap-3">
