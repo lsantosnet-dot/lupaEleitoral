@@ -6,16 +6,10 @@ import { ExplorarContent } from "./ExplorarContent"
 export default async function Explorar() {
   const initialPoliticos = await getPoliticos();
   const user = await currentUser();
-  const { getToken } = await auth();
 
   let favoriteIds: string[] = [];
   if (user) {
-    try {
-      const token = await getToken({ template: 'supabase' }) || '';
-      favoriteIds = await getUserFavoriteIds(token, user.id);
-    } catch (e) {
-      console.error("Erro ao buscar favoritos no servidor:", e);
-    }
+    favoriteIds = await getUserFavoriteIds(null, user.id);
   }
 
   return (

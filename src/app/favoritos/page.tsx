@@ -1,4 +1,4 @@
-import { currentUser, auth } from '@clerk/nextjs/server'
+import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { getFavoritesFeed, getUserFavorites } from '@/lib/queries'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -10,22 +10,14 @@ import { FavoritosContent } from './FavoritosContent'
 
 export default async function Favoritos() {
   const user = await currentUser()
-  const { getToken } = await auth()
 
   if (!user) {
     redirect('/sign-in')
   }
 
-  let token = ''
-  try {
-    token = await getToken({ template: 'supabase' }) || ''
-  } catch (e) {
-    console.error("Clerk JWT Template 'supabase' not found. Please configure it in Clerk Dashboard.", e);
-  }
-  
   const [feed, monitorados] = await Promise.all([
-    getFavoritesFeed(token, user.id),
-    getUserFavorites(token, user.id)
+    getFavoritesFeed(null, user.id),
+    getUserFavorites(null, user.id)
   ])
 
   return (

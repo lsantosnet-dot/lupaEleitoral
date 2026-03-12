@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useAuth, useUser } from "@clerk/nextjs"
+import { useUser } from "@clerk/nextjs"
 import { Politico, toggleFavorite } from "@/lib/queries"
 import { PoliticoCard } from "@/components/PoliticoCard"
 import { Star } from "lucide-react"
@@ -11,7 +11,6 @@ interface FavoritosContentProps {
 }
 
 export function FavoritosContent({ initialFavoritos }: FavoritosContentProps) {
-  const { getToken } = useAuth()
   const { user } = useUser()
   const [favoritos, setFavoritos] = useState<Politico[]>(initialFavoritos)
 
@@ -22,28 +21,14 @@ export function FavoritosContent({ initialFavoritos }: FavoritosContentProps) {
     const originalFavoritos = [...favoritos]
     setFavoritos(prev => prev.filter(p => p.id !== politicoId))
 
-    let token: string | null = null
     try {
-      token = await getToken({ template: 'supabase' })
-    } catch (e) {
-      console.warn("Erro ao buscar token com template 'supabase' nos favoritos, tentando token padrão:", e)
-      try {
-        token = await getToken()
-      } catch (e2) {
-        console.error("Erro ao buscar qualquer token nos favoritos:", e2)
-      }
-    }
-
-    try {
-      const res = await toggleFavorite(token, user.id, politicoId)
-      
+      const res = await toggleFavorite(null, user.id, politicoId)
       if (!res.success || res.action === 'added') {
-        // Se falhou ou curiosamente adicionou (não deveria na página de favoritos), reverte
         setFavoritos(originalFavoritos)
       }
     } catch (e) {
       setFavoritos(originalFavoritos)
-      console.error("Erro ao executar toggleFavorite nos favoritos:", e)
+      console.error("Erro ao remover favorito:", e)
     }
   }
 

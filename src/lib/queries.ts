@@ -119,12 +119,13 @@ export async function getHighlights() {
 
 /**
  * Busca os favoritos de um usuário específico
+ * 
+ * NOTA MVP: Usamos supabasePublic pois a política RLS está temporariamente aberta (USING(true)).
+ * A integração Clerk→Supabase JWT requer configuração adicional no dashboard do Supabase.
  */
-export async function getUserFavorites(clerkToken: string | null, userId: string): Promise<Politico[]> {
-  const supabase = (clerkToken && clerkToken !== "") ? createClerkSupabaseClient(clerkToken) : supabasePublic;
-  
-  const { data, error } = await supabase
-    .from('Usuarios_Politicos_Favoritos')
+export async function getUserFavorites(_clerkToken: string | null, userId: string): Promise<Politico[]> {
+  const { data, error } = await supabasePublic
+    .from('usuarios_politicos_favoritos')
     .select(`
       politico_id,
       politicos (*)
@@ -132,42 +133,23 @@ export async function getUserFavorites(clerkToken: string | null, userId: string
     .eq('user_id', userId);
 
   if (error) {
-    if (error.code === '42P01') {
-       const { data: dataAlt, error: errorAlt } = await supabase
-        .from('usuarios_politicos_favoritos')
-        .select(`
-          politico_id,
-          politicos (*)
-        `)
-        .eq('user_id', userId);
-        if (!errorAlt && dataAlt) return (dataAlt as any[]).map(f => f.politicos);
-    }
     console.error("Erro ao buscar favoritos:", error);
     return [];
   }
 
-  return (data as any[] || []).map(f => f.politicos);
+  return (data as any[] || []).map(f => f.politicos).filter(Boolean);
 }
 
 /**
  * Busca apenas os IDs dos favoritos de um usuário específico
  */
-export async function getUserFavoriteIds(clerkToken: string | null, userId: string): Promise<string[]> {
-  const supabase = (clerkToken && clerkToken !== "") ? createClerkSupabaseClient(clerkToken) : supabasePublic;
-  
-  const { data, error } = await supabase
-    .from('Usuarios_Politicos_Favoritos')
+export async function getUserFavoriteIds(_clerkToken: string | null, userId: string): Promise<string[]> {
+  const { data, error } = await supabasePublic
+    .from('usuarios_politicos_favoritos')
     .select('politico_id')
     .eq('user_id', userId);
 
   if (error) {
-    if (error.code === '42P01') {
-       const { data: dataAlt, error: errorAlt } = await supabase
-        .from('usuarios_politicos_favoritos')
-        .select('politico_id')
-        .eq('user_id', userId);
-        if (!errorAlt && dataAlt) return (dataAlt as any[]).map(f => f.politico_id);
-    }
     console.error("Erro ao buscar IDs de favoritos:", error);
     return [];
   }
@@ -177,64 +159,42 @@ export async function getUserFavoriteIds(clerkToken: string | null, userId: stri
 
 /**
  * Alterna o estado de favorito de um político para o usuário
+ * 
+ * NOTA MVP: Usamos supabasePublic pois a política RLS está temporariamente aberta (USING(true)).
  */
-export async function toggleFavorite(clerkToken: string | null, userId: string, politicoId: string) {
-  const supabase = (clerkToken && clerkToken !== "") ? createClerkSupabaseClient(clerkToken) : supabasePublic;
-  
-  const tableNames = ['Usuarios_Politicos_Favoritos', 'usuarios_politicos_favoritos'];
-
-  async function tryFetch(name: string) {
-    return await supabase
-      .from(name)
-      .select('id')
-      .eq('user_id', userId)
-      .eq('politico_id', politicoId)
-      .maybeSingle();
-  }
-
-  let data = null;
-  let fetchError = null;
-  let resolvedTableName = tableNames[0];
-
-  const firstAttempt = await tryFetch(tableNames[0]);
-  if (firstAttempt.error && firstAttempt.error.code === '42P01') {
-    const secondAttempt = await tryFetch(tableNames[1]);
-    if (!secondAttempt.error) {
-      data = secondAttempt.data;
-      resolvedTableName = tableNames[1];
-    } else {
-      fetchError = secondAttempt.error;
-    }
-  } else {
-    data = firstAttempt.data;
-    fetchError = firstAttempt.error;
-    resolvedTableName = tableNames[0];
-  }
+export async function toggleFavorite(_clerkToken: string | null, userId: string, politicoId: string) {
+  // Verificar se já é favorito
+  const { data, error: fetchError } = await supabasePublic
+    .from('usuarios_politicos_favoritos')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('politico_id', politicoId)
+    .maybeSingle();
 
   if (fetchError) {
-    console.error("Erro ao verificar favorito:", fetchError);
+    console.error("[toggleFavorite] Erro ao verificar favorito:", fetchError);
     return { error: fetchError, success: false };
   }
 
   if (data) {
     // Se existe, remover
-    const { error: deleteError } = await supabase
-      .from(resolvedTableName)
+    const { error: deleteError } = await supabasePublic
+      .from('usuarios_politicos_favoritos')
       .delete()
       .eq('id', data.id);
     
+    if (deleteError) console.error("[toggleFavorite] Erro ao remover:", deleteError);
     return { success: !deleteError, action: 'removed', error: deleteError };
   } else {
     // Se não existe, adicionar
-    const { error: insertError } = await supabase
-      .from(resolvedTableName)
+    const { error: insertError } = await supabasePublic
+      .from('usuarios_politicos_favoritos')
       .insert({
         user_id: userId,
         politico_id: politicoId
       });
     
-    if (insertError) console.error(`Erro ao inserir favorito na tabela ${resolvedTableName}:`, insertError);
-    
+    if (insertError) console.error("[toggleFavorite] Erro ao inserir:", insertError);
     return { success: !insertError, action: 'added', error: insertError };
   }
 }
@@ -242,8 +202,8 @@ export async function toggleFavorite(clerkToken: string | null, userId: string, 
 /**
  * Busca o feed de projetos dos favoritos
  */
-export async function getFavoritesFeed(clerkToken: string, userId: string) {
-  const favoritos = await getUserFavorites(clerkToken, userId);
+export async function getFavoritesFeed(_clerkToken: string | null, userId: string) {
+  const favoritos = await getUserFavorites(null, userId);
   const ids = favoritos.map((f: any) => f.id);
 
   if (ids.length === 0) return [];
