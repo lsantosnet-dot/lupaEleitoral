@@ -29,6 +29,17 @@ export default function ApoiePage() {
         </p>
       </section>
 
+      <div className="bg-slate-900 text-white rounded-3xl p-6 mt-2 relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-4 opacity-10">
+            <Heart className="h-24 w-24 rotate-12" />
+        </div>
+        <p className="text-slate-300 text-sm leading-relaxed text-center font-medium relative z-10">
+          A ética na política começa com a participação ativa de cada cidadão. Sua contribuição é fundamental para mantermos esta plataforma viva, gratuita e totalmente independente de interesses partidários. 
+          <br /><br />
+          Juntos, construímos uma democracia mais transparente e consciente. Sua ajuda faz a diferença!
+        </p>
+      </div>
+
       <Card className="border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden rounded-3xl">
         <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-4">
           <CardTitle className="text-center text-sm font-semibold uppercase tracking-wider text-slate-500">QR Code PIX</CardTitle>
@@ -65,20 +76,9 @@ export default function ApoiePage() {
         </CardContent>
       </Card>
 
-      <div className="bg-slate-900 text-white rounded-3xl p-6 mt-2 relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-4 opacity-10">
-            <Heart className="h-24 w-24 rotate-12" />
-        </div>
-        <p className="text-slate-300 text-sm leading-relaxed text-center font-medium relative z-10">
-          A ética na política começa com a participação ativa de cada cidadão. Sua contribuição é fundamental para mantermos esta plataforma viva, gratuita e totalmente independente de interesses partidários. 
-          <br /><br />
-          Juntos, construímos uma democracia mais transparente e consciente. Sua ajuda faz a diferença!
-        </p>
-      </div>
-
       <div className="mt-auto pb-8 text-center">
         <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">
-          Transparência & Democracia • v1.0.16
+          Transparência & Democracia • v1.0.17
         </p>
       </div>
     </div>
