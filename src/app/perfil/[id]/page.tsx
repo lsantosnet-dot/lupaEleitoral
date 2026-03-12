@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress"
 import { ChevronLeft, Share2, AlertTriangle, FileText, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { PatrimonioChart } from "@/components/PatrimonioChart"
 
 export default async function Perfil({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
@@ -136,29 +137,8 @@ export default async function Perfil({ params }: { params: Promise<{ id: string 
           </CardContent>
         </Card>
 
-        {/* Patrimônio Simplificado */}
-        <Card className="border-slate-200 shadow-sm text-center flex flex-col justify-between">
-          <CardContent className="p-4 flex flex-col items-center justify-center h-full">
-            <h4 className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-4">Patrimônio</h4>
-            
-            <div className="flex items-end justify-center gap-2 h-16 w-full mb-3 px-2">
-               <div className="w-1/3 bg-slate-200 rounded-t-sm h-[30%]" />
-               <div className="w-1/3 bg-slate-300 rounded-t-sm h-[60%]" />
-               <div className="w-1/3 bg-primary rounded-t-sm h-[90%] shadow-sm relative group">
-                  <div className="absolute -top-3 -right-1 w-2 h-2 rounded-full bg-primary" />
-               </div>
-            </div>
-            
-            <div className="flex justify-between w-full text-[8px] text-slate-400 font-medium px-1">
-              <span>2018</span>
-              <span>2022</span>
-              <span className="text-primary font-bold">2026</span>
-            </div>
-            <span className="text-[9px] text-emerald-600 font-bold bg-emerald-50 py-0.5 px-2 rounded mt-2 inline-block">
-               Dados Supabase
-            </span>
-          </CardContent>
-        </Card>
+        {/* Patrimônio Dinâmico */}
+        <PatrimonioChart data={politico.evolucao || []} />
       </div>
 
       {/* Projetos Recentes */}
