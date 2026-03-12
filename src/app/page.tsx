@@ -11,31 +11,31 @@ export default async function Home() {
   return (
     <div className="flex flex-col gap-6 p-4">
       {/* Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl bg-slate-900 p-8 shadow-2xl shadow-indigo-950/20 border border-slate-800/50">
+      <section className="relative overflow-hidden rounded-3xl bg-slate-900 p-6 shadow-2xl shadow-indigo-950/20 border border-slate-800/50">
         {/* Decorative Background Elements */}
-        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-indigo-500/10 blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-indigo-500/10 blur-3xl" />
+        <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-primary/10 blur-3xl" />
         
-        <div className="relative z-10 flex flex-col gap-4 max-w-[90%]">
+        <div className="relative z-10 flex flex-col gap-3 max-w-[90%]">
           <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-400/20 px-3 py-1 rounded-full w-fit">
             <span className="flex h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse" />
             <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-300">Transparência Ativa</span>
           </div>
           
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2 leading-tight">
+            <h1 className="text-2xl font-extrabold tracking-tight text-white mb-2 leading-tight">
               Fiscalize seus <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-indigo-100">representantes</span>
             </h1>
-            <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
+            <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
               Acompanhe o desempenho, gastos e projetos dos parlamentares de forma clara e objetiva.
             </p>
           </div>
           
-          <div className="flex gap-3 pt-2">
-            <Button size="default" className="bg-white text-slate-900 hover:bg-slate-100 rounded-xl h-10 px-6 font-bold shadow-md transition-all active:scale-95" asChild>
+          <div className="flex gap-3 pt-1">
+            <Button size="sm" className="bg-white text-slate-900 hover:bg-slate-100 rounded-xl h-9 px-5 font-bold shadow-md transition-all active:scale-95" asChild>
               <Link href="/explorar">Começar agora</Link>
             </Button>
-            <Button variant="outline" size="default" className="bg-transparent border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white rounded-xl h-10 px-6 font-bold transition-all active:scale-95" asChild>
+            <Button variant="outline" size="sm" className="bg-transparent border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white rounded-xl h-9 px-5 font-bold transition-all active:scale-95" asChild>
               <Link href="/ranking">Ver Ranking</Link>
             </Button>
           </div>
