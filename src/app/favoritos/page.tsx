@@ -1,11 +1,12 @@
 import { currentUser, auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import { getFavoritesFeed } from '@/lib/queries'
+import { getFavoritesFeed, getUserFavorites } from '@/lib/queries'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Bell, Search, Star, ThumbsUp, MessageSquare } from 'lucide-react'
+import { Bell, Search, Star, ThumbsUp, MessageSquare, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
+import { FavoritosContent } from './FavoritosContent'
 
 export default async function Favoritos() {
   const user = await currentUser()
@@ -22,7 +23,10 @@ export default async function Favoritos() {
     console.error("Clerk JWT Template 'supabase' not found. Please configure it in Clerk Dashboard.", e);
   }
   
-  const feed = await getFavoritesFeed(token, user.id)
+  const [feed, monitorados] = await Promise.all([
+    getFavoritesFeed(token, user.id),
+    getUserFavorites(token, user.id)
+  ])
 
   return (
     <div className="flex flex-col gap-6 p-4 pb-24">
@@ -37,10 +41,7 @@ export default async function Favoritos() {
          </div>
       </div>
 
-      <div className="bg-slate-100 rounded-xl p-4">
-        <h2 className="font-semibold text-slate-800 text-lg mb-1">Olá, {user.firstName || 'Cidadão'}</h2>
-        <p className="text-sm text-slate-600">Você está acompanhando <strong className="text-primary">12 parlamentares</strong>.</p>
-      </div>
+      <FavoritosContent initialFavoritos={monitorados} />
 
       <div className="flex gap-2 mb-2 overflow-x-auto pb-2 hide-scrollbar">
          <Button variant="default" size="sm" className="rounded-full shadow-sm text-xs h-8">Todos</Button>
@@ -49,50 +50,51 @@ export default async function Favoritos() {
          <Button variant="outline" size="sm" className="rounded-full bg-white text-xs h-8 text-slate-600">Eventos</Button>
       </div>
 
-      <div className="flex flex-col gap-5">
-         {feed.map(item => {
-           return (
-             <Card key={item.id} className="border-slate-200 shadow-sm overflow-hidden flex flex-col pt-0">
-                <div className="h-32 bg-slate-200 w-full relative group">
-                   {/* Fake Banner */}
-                   <div className="absolute inset-0 bg-slate-800/20 group-hover:bg-slate-800/10 transition-colors" />
-                   
-                   <div className="absolute bottom-3 left-4 flex flex-col">
-                      <div className="flex items-center gap-2">
-                         <Avatar className="h-8 w-8 border-2 border-white shadow-sm">
-                           <AvatarImage src={item.politico.foto} />
-                           <AvatarFallback>{item.politico.nome[0]}</AvatarFallback>
-                         </Avatar>
-                         <span className="text-white font-medium text-sm drop-shadow-md">{item.politico.nome}</span>
-                      </div>
-                   </div>
-                </div>
+      <div className="flex flex-col gap-4">
+         <h3 className="font-bold text-slate-900 text-lg">Atividades Recentes</h3>
+         {feed.length === 0 ? (
+           <p className="text-sm text-slate-500 italic">Nenhuma atividade recente nos seus favoritos.</p>
+         ) : (
+           <div className="flex flex-col gap-5">
+             {feed.map(item => (
+               <Card key={item.id} className="border-slate-200 shadow-sm overflow-hidden flex flex-col pt-0">
+                  <div className="h-32 bg-slate-200 w-full relative group">
+                     <div className="absolute inset-0 bg-slate-800/20 group-hover:bg-slate-800/10 transition-colors" />
+                     <div className="absolute bottom-3 left-4 flex flex-col">
+                        <div className="flex items-center gap-2">
+                           <Avatar className="h-8 w-8 border-2 border-white shadow-sm">
+                             <AvatarImage src={item.politico.foto} />
+                             <AvatarFallback>{item.politico.nome[0]}</AvatarFallback>
+                           </Avatar>
+                           <span className="text-white font-medium text-sm drop-shadow-md">{item.politico.nome}</span>
+                        </div>
+                     </div>
+                  </div>
 
-                <CardContent className="p-4">
-                   <div className="flex justify-between items-center mb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded">{item.tipo}</span>
-                      <span className="text-[10px] font-medium text-slate-400">{item.tempo}</span>
-                   </div>
-                   
-                   <p className="font-medium text-slate-800 leading-snug mb-4">{item.titulo}</p>
-                   
-                   <div className="flex justify-between items-center border-t border-slate-100 pt-3 mt-2">
-                      <div className="flex gap-4 text-slate-500">
-                        <button className="flex items-center gap-1.5 hover:text-primary transition-colors">
-                          <ThumbsUp className="h-4 w-4" /> <span className="text-xs font-medium">{item.likes}</span>
-                        </button>
-                        <button className="flex items-center gap-1.5 hover:text-primary transition-colors">
-                          <MessageSquare className="h-4 w-4" /> <span className="text-xs font-medium">{item.comments}</span>
-                        </button>
-                      </div>
-                      <Button variant="ghost" size="sm" className="text-xs text-primary h-auto p-0 hover:bg-transparent" asChild>
-                        <Link href="#">Ver detalhes <span className="ml-1">›</span></Link>
-                      </Button>
-                   </div>
-                </CardContent>
-             </Card>
-           )
-         })}
+                  <CardContent className="p-4">
+                     <div className="flex justify-between items-center mb-2">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded">{item.tipo}</span>
+                        <span className="text-[10px] font-medium text-slate-400">{item.tempo}</span>
+                     </div>
+                     <p className="font-medium text-slate-800 leading-snug mb-4">{item.titulo}</p>
+                     <div className="flex justify-between items-center border-t border-slate-100 pt-3 mt-2">
+                        <div className="flex gap-4 text-slate-500">
+                          <button className="flex items-center gap-1.5 hover:text-primary transition-colors">
+                            <ThumbsUp className="h-4 w-4" /> <span className="text-xs font-medium">{item.likes}</span>
+                          </button>
+                          <button className="flex items-center gap-1.5 hover:text-primary transition-colors">
+                            <MessageSquare className="h-4 w-4" /> <span className="text-xs font-medium">{item.comments}</span>
+                          </button>
+                        </div>
+                        <Button variant="ghost" size="sm" className="text-xs text-primary h-auto p-0 hover:bg-transparent" asChild>
+                          <Link href="#">Ver detalhes <ChevronRight className="h-3 w-3 ml-1" /></Link>
+                        </Button>
+                     </div>
+                  </CardContent>
+               </Card>
+             ))}
+           </div>
+         )}
 
          <div className="text-center p-8 bg-slate-50 rounded-xl border border-slate-200 border-dashed mt-2">
            <Star className="h-8 w-8 text-slate-300 mx-auto mb-2" />

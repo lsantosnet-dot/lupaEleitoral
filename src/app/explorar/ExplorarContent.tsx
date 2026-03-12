@@ -13,6 +13,7 @@ import { useSearchParams } from "next/navigation"
 import { useAuth, useUser } from "@clerk/nextjs"
 import { Politico, toggleFavorite } from "@/lib/queries"
 import { cn } from "@/lib/utils"
+import { PoliticoCard } from "@/components/PoliticoCard"
 
 interface ExplorarContentProps {
   initialPoliticos: Politico[]
@@ -127,55 +128,14 @@ export function ExplorarContent({ initialPoliticos, initialFavoriteIds = [] }: E
 
     return (
       <div className="flex flex-col gap-4 mt-4">
-        {list.map((p) => {
-          const isFavorite = favoriteIds.includes(p.id)
-          return (
-            <Card key={p.id} className="border-slate-200 shadow-sm overflow-hidden flex flex-col pt-0">
-              <CardContent className="p-4 flex gap-4 relative">
-                <button 
-                  onClick={() => handleToggleFavorite(p.id)}
-                  className={cn(
-                    "absolute top-4 right-4 transition-colors p-1 rounded-full hover:bg-slate-50",
-                    isFavorite ? "text-rose-500" : "text-slate-300 hover:text-rose-400"
-                  )}
-                >
-                  <Heart className={cn("h-5 w-5", isFavorite && "fill-current")} />
-                </button>
-
-                <Avatar className="h-14 w-14 border border-slate-100 shadow-sm">
-                  <AvatarImage src={p.foto_url || ''} />
-                  <AvatarFallback>{p.nome_urna[0]}</AvatarFallback>
-                </Avatar>
-
-                <div className="flex-1">
-                  <Link href={`/perfil/${p.id}`} className="block group">
-                    <h3 className="font-semibold text-slate-900 group-hover:text-primary transition-colors text-base">{p.nome_urna}</h3>
-                    <p className="text-xs text-slate-500 mb-2">{p.partido_atual} - {p.uf}</p>
-                  </Link>
-
-                  <div className="flex gap-4 mb-3">
-                    <div>
-                      <span className="text-[10px] text-slate-500 uppercase tracking-wider block mb-0.5">Assiduidade</span>
-                      <span className={`text-sm font-medium ${(p.presenca_pct || 0) >= 90 ? 'text-emerald-600' : (p.presenca_pct || 0) >= 80 ? 'text-amber-600' : 'text-rose-600'}`}>
-                        {p.presenca_pct}%
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-slate-500 uppercase tracking-wider block mb-0.5">Gastos Mensais</span>
-                      <span className="text-sm font-medium text-slate-900">
-                        R$ {((p.despesas_mes || 0) / 1000).toFixed(1)}k
-                      </span>
-                    </div>
-                  </div>
-
-                  <Button variant="outline" size="sm" className="w-full text-xs" asChild>
-                    <Link href={`/perfil/${p.id}`}>Ver Perfil Completo</Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
+        {list.map((p) => (
+          <PoliticoCard 
+            key={p.id} 
+            politico={p} 
+            isFavorite={favoriteIds.includes(p.id)} 
+            onToggleFavorite={handleToggleFavorite} 
+          />
+        ))}
       </div>
     )
   }

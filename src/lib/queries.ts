@@ -120,11 +120,11 @@ export async function getHighlights() {
 /**
  * Busca os favoritos de um usuário específico
  */
-export async function getUserFavorites(clerkToken: string, userId: string) {
-  const supabase = createClerkSupabaseClient(clerkToken);
+export async function getUserFavorites(clerkToken: string | null, userId: string): Promise<Politico[]> {
+  const supabase = (clerkToken && clerkToken !== "") ? createClerkSupabaseClient(clerkToken) : supabasePublic;
   
   const { data, error } = await supabase
-    .from('usuarios_politicos_favoritos')
+    .from('Usuarios_Politicos_Favoritos')
     .select(`
       politico_id,
       politicos (*)
@@ -132,41 +132,60 @@ export async function getUserFavorites(clerkToken: string, userId: string) {
     .eq('user_id', userId);
 
   if (error) {
+    if (error.code === '42P01') {
+       const { data: dataAlt, error: errorAlt } = await supabase
+        .from('usuarios_politicos_favoritos')
+        .select(`
+          politico_id,
+          politicos (*)
+        `)
+        .eq('user_id', userId);
+        if (!errorAlt && dataAlt) return (dataAlt as any[]).map(f => f.politicos);
+    }
     console.error("Erro ao buscar favoritos:", error);
     return [];
   }
 
-  return data.map(f => f.politicos);
+  return (data as any[] || []).map(f => f.politicos);
 }
 
 /**
  * Busca apenas os IDs dos favoritos de um usuário específico
  */
-export async function getUserFavoriteIds(clerkToken: string, userId: string) {
-  const supabase = createClerkSupabaseClient(clerkToken);
+export async function getUserFavoriteIds(clerkToken: string | null, userId: string): Promise<string[]> {
+  const supabase = (clerkToken && clerkToken !== "") ? createClerkSupabaseClient(clerkToken) : supabasePublic;
   
   const { data, error } = await supabase
-    .from('usuarios_politicos_favoritos')
+    .from('Usuarios_Politicos_Favoritos')
     .select('politico_id')
     .eq('user_id', userId);
 
   if (error) {
+    if (error.code === '42P01') {
+       const { data: dataAlt, error: errorAlt } = await supabase
+        .from('usuarios_politicos_favoritos')
+        .select('politico_id')
+        .eq('user_id', userId);
+        if (!errorAlt && dataAlt) return (dataAlt as any[]).map(f => f.politico_id);
+    }
     console.error("Erro ao buscar IDs de favoritos:", error);
     return [];
   }
 
-  return data.map(f => f.politico_id);
+  return (data as any[] || []).map(f => f.politico_id);
 }
 
 /**
  * Alterna o estado de favorito de um político para o usuário
  */
-export async function toggleFavorite(clerkToken: string, userId: string, politicoId: string) {
-  const supabase = createClerkSupabaseClient(clerkToken);
+export async function toggleFavorite(clerkToken: string | null, userId: string, politicoId: string) {
+  const supabase = clerkToken ? createClerkSupabaseClient(clerkToken) : supabasePublic;
   
+  const tableName = 'Usuarios_Politicos_Favoritos';
+
   // Verificar se já é favorito
   const { data, error: fetchError } = await supabase
-    .from('usuarios_politicos_favoritos')
+    .from(tableName)
     .select('id')
     .eq('user_id', userId)
     .eq('politico_id', politicoId)
@@ -174,13 +193,13 @@ export async function toggleFavorite(clerkToken: string, userId: string, politic
 
   if (fetchError) {
     console.error("Erro ao verificar favorito:", fetchError);
-    return { error: fetchError };
+    return { error: fetchError, success: false };
   }
 
   if (data) {
     // Se existe, remover
     const { error: deleteError } = await supabase
-      .from('usuarios_politicos_favoritos')
+      .from(tableName)
       .delete()
       .eq('id', data.id);
     
@@ -188,11 +207,13 @@ export async function toggleFavorite(clerkToken: string, userId: string, politic
   } else {
     // Se não existe, adicionar
     const { error: insertError } = await supabase
-      .from('usuarios_politicos_favoritos')
+      .from(tableName)
       .insert({
         user_id: userId,
         politico_id: politicoId
       });
+    
+    if (insertError) console.error("Erro ao inserir favorito:", insertError);
     
     return { success: !insertError, action: 'added', error: insertError };
   }
