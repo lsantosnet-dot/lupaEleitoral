@@ -26,14 +26,35 @@ export default async function Home() {
       {/* Acesso Rápido */}
       <section>
         <h2 className="text-lg font-semibold mb-3">Acesso Rápido</h2>
-        <div className="grid grid-cols-2 gap-3">
-          <Link href="/explorar?cargo=deputado" className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-center items-center gap-2 shadow-sm hover:border-primary transition-colors">
-            <span className="text-2xl font-serif">🏛️</span>
-            <span className="font-medium text-slate-800">Deputados</span>
+        <div className="grid grid-cols-2 gap-4">
+          <Link 
+            href="/explorar?cargo=deputado" 
+            className="group relative h-32 overflow-hidden rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+          >
+            <img 
+              src="/images/camara.png" 
+              alt="Câmara dos Deputados" 
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-4">
+              <span className="text-white font-bold text-lg">Deputados</span>
+              <span className="text-white/70 text-[10px] uppercase tracking-wider font-medium">Câmara Federal</span>
+            </div>
           </Link>
-          <Link href="/explorar?cargo=senador" className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-center items-center gap-2 shadow-sm hover:border-primary transition-colors">
-            <span className="text-2xl font-serif">🏛️</span>
-            <span className="font-medium text-slate-800">Senadores</span>
+
+          <Link 
+            href="/explorar?cargo=senador" 
+            className="group relative h-32 overflow-hidden rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+          >
+            <img 
+              src="/images/senado.png" 
+              alt="Senado Federal" 
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-4">
+              <span className="text-white font-bold text-lg">Senadores</span>
+              <span className="text-white/70 text-[10px] uppercase tracking-wider font-medium">Senado Federal</span>
+            </div>
           </Link>
         </div>
       </section>
