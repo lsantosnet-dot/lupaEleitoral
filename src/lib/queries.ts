@@ -128,7 +128,11 @@ export async function getUserFavorites(_clerkToken: string | null, userId: strin
     .from('usuarios_politicos_favoritos')
     .select(`
       politico_id,
-      politicos (*)
+      politicos (
+        *,
+        despesas:despesas_mensais_consolidadas(valor_total),
+        desempenho:desempenho_plenario(presencas, ausencias_nao_justificadas)
+      )
     `)
     .eq('user_id', userId);
 
@@ -137,7 +141,27 @@ export async function getUserFavorites(_clerkToken: string | null, userId: strin
     return [];
   }
 
-  return (data as any[] || []).map(f => f.politicos).filter(Boolean);
+  return (data as any[] || []).map(f => {
+    const p = f.politicos;
+    if (!p) return null;
+
+    // Somar todas as despesas
+    const despesas_mes = (p.despesas || []).reduce((acc: number, d: any) => acc + (d.valor_total || 0), 0);
+    
+    // Somar presenças e ausências
+    const desempenho = p.desempenho || [];
+    const presencas = desempenho.reduce((acc: number, d: any) => acc + (d.presencas || 0), 0);
+    const ausencias = desempenho.reduce((acc: number, d: any) => acc + (d.ausencias_nao_justificadas || 0), 0);
+    
+    const total = presencas + ausencias;
+    const presenca_pct = total > 0 ? Math.round((presencas / total) * 100) : 0;
+
+    return {
+      ...p,
+      despesas_mes,
+      presenca_pct
+    };
+  }).filter(Boolean);
 }
 
 /**
