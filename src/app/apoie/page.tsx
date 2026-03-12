@@ -31,10 +31,10 @@ export default function ApoiePage() {
 
       <div className="bg-slate-900 text-white rounded-3xl p-6 mt-2 relative overflow-hidden">
         <div className="absolute top-0 right-0 p-4 opacity-10">
-            <Heart className="h-24 w-24 rotate-12" />
+          <Heart className="h-24 w-24 rotate-12" />
         </div>
         <p className="text-slate-300 text-sm leading-relaxed text-center font-medium relative z-10">
-          A ética na política começa com a participação ativa de cada cidadão. Sua contribuição é fundamental para mantermos esta plataforma viva, gratuita e totalmente independente de interesses partidários. 
+          A ética na política começa com a participação ativa de cada cidadão. Sua contribuição é fundamental para mantermos esta plataforma viva, gratuita e totalmente independente de interesses partidários.
           <br /><br />
           Juntos, construímos uma democracia mais transparente e consciente. Sua ajuda faz a diferença!
         </p>
@@ -46,17 +46,17 @@ export default function ApoiePage() {
         </CardHeader>
         <CardContent className="flex flex-col items-center p-8 gap-6">
           <div className="bg-white p-3 rounded-2xl border-4 border-slate-50 shadow-inner">
-             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img 
-              src={qrCodeUrl} 
-              alt="QR Code PIX" 
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={qrCodeUrl}
+              alt="QR Code PIX"
               className="w-48 h-48 sm:w-64 sm:h-64 rounded-lg"
             />
           </div>
-          
+
           <div className="w-full space-y-3">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className={`w-full h-12 rounded-xl transition-all duration-300 font-medium ${copied ? 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-50' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'}`}
               onClick={copyPix}
             >
@@ -78,7 +78,7 @@ export default function ApoiePage() {
 
       <div className="mt-auto pb-8 text-center">
         <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">
-          Transparência & Democracia • v1.0.21
+          Transparência & Democracia • v1.0.22
         </p>
       </div>
     </div>

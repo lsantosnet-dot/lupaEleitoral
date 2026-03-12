@@ -12,7 +12,7 @@ import { PatrimonioChart } from "@/components/PatrimonioChart"
 export default async function Perfil({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
   const politico = await getPoliticoById(resolvedParams.id)
-  
+
   if (!politico) return notFound()
 
   const projetos = politico.projetos || []
@@ -20,18 +20,15 @@ export default async function Perfil({ params }: { params: Promise<{ id: string 
   const maxGastoCasa = 45000 // Mantendo teto mockado para cálculo do termômetro
   const mediaCasa = 38000 // Mantendo média mockada para cálculo do termômetro
   const gastoPctTeto = ((politico.despesas_mes || 0) / maxGastoCasa) * 100
-  
+
   const gastoColor = (politico.despesas_mes || 0) > mediaCasa ? 'bg-rose-500' : 'bg-emerald-500'
 
   return (
     <div className="flex flex-col gap-6 p-4 pb-24">
       {/* Header Area */}
       <div className="flex items-center justify-between">
-         <div className="w-10" /> {/* Spacer to keep title centered if needed, or just let it flow */}
-         <h1 className="font-semibold text-sm text-slate-500 uppercase tracking-widest">Perfil Parlamentar</h1>
-         <button className="p-2 -mr-2 text-slate-500 hover:text-slate-900">
-           <Share2 className="h-5 w-5" />
-         </button>
+        <div className="w-10" /> {/* Spacer to keep title centered if needed, or just let it flow */}
+        <h1 className="font-semibold text-sm text-slate-500 uppercase tracking-widest">Perfil Parlamentar</h1>
       </div>
 
       {/* Hero Profile */}
@@ -42,7 +39,7 @@ export default async function Perfil({ params }: { params: Promise<{ id: string 
             <AvatarFallback className="text-3xl">{politico.nome_urna[0]}</AvatarFallback>
           </Avatar>
           <div className="absolute bottom-0 right-0 bg-emerald-500 border-2 border-white rounded-full p-1 shadow-sm">
-             <CheckCircle2 className="h-4 w-4 text-white" />
+            <CheckCircle2 className="h-4 w-4 text-white" />
           </div>
         </div>
 
@@ -53,23 +50,23 @@ export default async function Perfil({ params }: { params: Promise<{ id: string 
         </div>
 
         <div className="flex flex-wrap justify-center gap-2">
-           {politico.tags_ia && politico.tags_ia.map((tag: string) => (
-             <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 text-xs px-3 py-1 font-medium items-center gap-1.5">
-               <span className="text-base leading-none pr-0.5">✨</span> {tag}
-             </Badge>
-           ))}
+          {politico.tags_ia && politico.tags_ia.map((tag: string) => (
+            <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 text-xs px-3 py-1 font-medium items-center gap-1.5">
+              <span className="text-base leading-none pr-0.5">✨</span> {tag}
+            </Badge>
+          ))}
         </div>
       </div>
 
       {/* Alerta Serenata */}
       {(politico.despesas_mes || 0) > mediaCasa && (
         <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex gap-4 items-start shadow-sm mt-2">
-           <AlertTriangle className="h-5 w-5 text-rose-500 mt-0.5 shrink-0" />
-           <div className="flex-1">
-             <h4 className="font-semibold text-rose-900 text-sm">Despesas sob investigação</h4>
-             <p className="text-xs text-rose-700/80 mt-1 mb-2">Identificado pela Operação Serenata de Amor</p>
-             <Button variant="destructive" size="sm" className="h-7 text-xs bg-rose-600">Ver detalhes</Button>
-           </div>
+          <AlertTriangle className="h-5 w-5 text-rose-500 mt-0.5 shrink-0" />
+          <div className="flex-1">
+            <h4 className="font-semibold text-rose-900 text-sm">Despesas sob investigação</h4>
+            <p className="text-xs text-rose-700/80 mt-1 mb-2">Identificado pela Operação Serenata de Amor</p>
+            <Button variant="destructive" size="sm" className="h-7 text-xs bg-rose-600">Ver detalhes</Button>
+          </div>
         </div>
       )}
 
@@ -83,24 +80,24 @@ export default async function Perfil({ params }: { params: Promise<{ id: string 
           <span className="text-xs text-slate-400 font-medium">CEAP 2024</span>
         </CardHeader>
         <CardContent className="p-4 pt-2">
-           <div className="flex justify-between items-end mb-2">
-             <span className="text-sm text-slate-500 font-medium">Gasto Acumulado</span>
-             <span className="text-xl font-bold text-slate-900">R$ {(politico.despesas_mes || 0).toLocaleString('pt-BR')}</span>
-           </div>
-           
-           <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden mt-3 relative">
-              <div 
-                className={`h-full ${gastoColor} transition-all duration-1000 ease-out`} 
-                style={{ width: `${Math.min(gastoPctTeto, 100)}%` }} 
-              />
-              <div className="absolute top-0 bottom-0 left-[60%] border-l-2 border-dashed border-slate-400/50 w-px" />
-           </div>
-           
-           <div className="flex justify-between text-[10px] text-slate-400 font-medium mt-2 tracking-wider">
-             <span>MIN: R$ 0</span>
-             <span className="ml-[20%]">MÉDIA: R$ 38K</span>
-             <span>TETO: R$ 45K</span>
-           </div>
+          <div className="flex justify-between items-end mb-2">
+            <span className="text-sm text-slate-500 font-medium">Gasto Acumulado</span>
+            <span className="text-xl font-bold text-slate-900">R$ {(politico.despesas_mes || 0).toLocaleString('pt-BR')}</span>
+          </div>
+
+          <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden mt-3 relative">
+            <div
+              className={`h-full ${gastoColor} transition-all duration-1000 ease-out`}
+              style={{ width: `${Math.min(gastoPctTeto, 100)}%` }}
+            />
+            <div className="absolute top-0 bottom-0 left-[60%] border-l-2 border-dashed border-slate-400/50 w-px" />
+          </div>
+
+          <div className="flex justify-between text-[10px] text-slate-400 font-medium mt-2 tracking-wider">
+            <span>MIN: R$ 0</span>
+            <span className="ml-[20%]">MÉDIA: R$ 38K</span>
+            <span>TETO: R$ 45K</span>
+          </div>
         </CardContent>
       </Card>
 
@@ -130,7 +127,7 @@ export default async function Perfil({ params }: { params: Promise<{ id: string 
                 />
               </svg>
               <div className="absolute flex flex-col items-center">
-                 <span className="text-lg font-bold text-slate-900">{politico.presenca_pct || 0}%</span>
+                <span className="text-lg font-bold text-slate-900">{politico.presenca_pct || 0}%</span>
               </div>
             </div>
             <span className="text-[10px] text-slate-500 font-medium">Presença</span>
@@ -152,15 +149,15 @@ export default async function Perfil({ params }: { params: Promise<{ id: string 
           {projetos.map((proj: any) => (
             <Card key={proj.id} className="border-slate-200 shadow-sm hover:border-primary/50 transition-colors cursor-pointer group">
               <CardContent className="p-4">
-                 <div className="flex justify-between items-start mb-2">
-                    <Badge variant="outline" className="text-[10px] font-bold text-slate-500 bg-slate-50">{proj.numero_ano}</Badge>
-                    <span className="text-xs text-slate-400 font-medium">{new Date(proj.data_apresentacao).toLocaleDateString('pt-BR')}</span>
-                 </div>
-                 <h4 className="font-bold text-slate-900 mb-2 leading-tight group-hover:text-primary transition-colors">{proj.titulo}</h4>
-                 <div className="bg-amber-50 rounded-lg p-3 border border-amber-100 text-sm relative">
-                    <span className="absolute -top-2.5 -left-1 text-base">✨</span>
-                    <p className="text-slate-700 leading-snug"><strong className="text-amber-800">Resumo IA:</strong> {proj.resumo_ia}</p>
-                 </div>
+                <div className="flex justify-between items-start mb-2">
+                  <Badge variant="outline" className="text-[10px] font-bold text-slate-500 bg-slate-50">{proj.numero_ano}</Badge>
+                  <span className="text-xs text-slate-400 font-medium">{new Date(proj.data_apresentacao).toLocaleDateString('pt-BR')}</span>
+                </div>
+                <h4 className="font-bold text-slate-900 mb-2 leading-tight group-hover:text-primary transition-colors">{proj.titulo}</h4>
+                <div className="bg-amber-50 rounded-lg p-3 border border-amber-100 text-sm relative">
+                  <span className="absolute -top-2.5 -left-1 text-base">✨</span>
+                  <p className="text-slate-700 leading-snug"><strong className="text-amber-800">Resumo IA:</strong> {proj.resumo_ia}</p>
+                </div>
               </CardContent>
             </Card>
           ))}
