@@ -25,7 +25,7 @@ export async function getPoliticos(cargo?: string) {
   let query = supabasePublic
     .from('politicos')
     .select(`
-      *,
+      id, id_camara_senado, cpf, nome_urna, cargo_atual, partido_atual, uf, foto_url, tags_ia,
       despesas:despesas_mensais_consolidadas(valor_total),
       desempenho:desempenho_plenario(presencas, ausencias_nao_justificadas)
     `);

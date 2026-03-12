@@ -98,7 +98,7 @@ export default async function Home() {
               {assiduos.map(p => (
                 <Link href={`/perfil/${p.id}`} key={p.id} className="flex gap-3 items-center group">
                   <Avatar className="h-10 w-10 border border-slate-100 shadow-sm">
-                    <AvatarImage src={p.foto_url} />
+                    <AvatarImage src={p.foto_url || ''} />
                     <AvatarFallback>{p.nome_urna[0]}</AvatarFallback>
                   </Avatar>
                   <div>
@@ -121,7 +121,7 @@ export default async function Home() {
                {gastadores.map(p => (
                 <Link href={`/perfil/${p.id}`} key={p.id} className="flex gap-3 items-center group">
                   <Avatar className="h-10 w-10 border border-slate-100 shadow-sm">
-                    <AvatarImage src={p.foto_url} />
+                    <AvatarImage src={p.foto_url || ''} />
                     <AvatarFallback>{p.nome_urna[0]}</AvatarFallback>
                   </Avatar>
                   <div>
