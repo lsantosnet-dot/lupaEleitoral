@@ -42,8 +42,8 @@ export function FavoritosContent({ initialFavoritos }: FavoritosContentProps) {
     const term = searchTerm.toLowerCase()
     return favoritos.filter(p => 
       p.nome_urna.toLowerCase().includes(term) ||
-      p.partido.toLowerCase().includes(term) ||
-      p.uf.toLowerCase().includes(term)
+      (p.partido_atual || "").toLowerCase().includes(term) ||
+      (p.uf || "").toLowerCase().includes(term)
     )
   }, [favoritos, searchTerm])
 

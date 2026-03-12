@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import { getPoliticos, getUserFavoriteIds } from "@/lib/queries"
-import { auth, currentUser } from "@clerk/nextjs/server"
+import { currentUser } from "@clerk/nextjs/server"
 import { ExplorarContent } from "./ExplorarContent"
 
 export default async function Explorar() {

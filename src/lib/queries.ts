@@ -42,20 +42,21 @@ export async function getPoliticos(cargo?: string) {
   }
 
   // Mapear para incluir dados agregados
-  return data.map((p: any) => {
+  return data.map((p: unknown) => {
+    const poly = p as Politico & { despesas: { valor_total: number }[], desempenho: { presencas: number, ausencias_nao_justificadas: number }[] };
     // Somar todas as despesas
-    const despesas_mes = (p.despesas || []).reduce((acc: number, d: any) => acc + (d.valor_total || 0), 0);
+    const despesas_mes = (poly.despesas || []).reduce((acc: number, d) => acc + (d.valor_total || 0), 0);
     
     // Somar presenças e ausências
-    const desempenho = p.desempenho || [];
-    const presencas = desempenho.reduce((acc: number, d: any) => acc + (d.presencas || 0), 0);
-    const ausencias = desempenho.reduce((acc: number, d: any) => acc + (d.ausencias_nao_justificadas || 0), 0);
+    const desempenho = poly.desempenho || [];
+    const presencas = desempenho.reduce((acc: number, d) => acc + (d.presencas || 0), 0);
+    const ausencias = desempenho.reduce((acc: number, d) => acc + (d.ausencias_nao_justificadas || 0), 0);
     
     const total = presencas + ausencias;
     const presenca_pct = total > 0 ? Math.round((presencas / total) * 100) : 0;
 
     return {
-      ...p,
+      ...poly,
       despesas_mes,
       presenca_pct
     };
@@ -83,10 +84,11 @@ export async function getPoliticoById(id: string) {
     return null;
   }
 
+  const polyData = data as any;
   // Calcular campos agregados
-  const despesas_mes = (data.despesas || []).reduce((acc: number, d: any) => acc + (d.valor_total || 0), 0);
+  const despesas_mes = (polyData.despesas || []).reduce((acc: number, d: any) => acc + (d.valor_total || 0), 0);
   
-  const desempenho = data.desempenho || [];
+  const desempenho = polyData.desempenho || [];
   const presencas = desempenho.reduce((acc: number, d: any) => acc + (d.presencas || 0), 0);
   const ausencias = desempenho.reduce((acc: number, d: any) => acc + (d.ausencias_nao_justificadas || 0), 0);
   
@@ -141,7 +143,7 @@ export async function getUserFavorites(_clerkToken: string | null, userId: strin
     return [];
   }
 
-  return (data as any[] || []).map(f => {
+  return (data as unknown as any[] || []).map(f => {
     const p = f.politicos;
     if (!p) return null;
 
@@ -150,8 +152,8 @@ export async function getUserFavorites(_clerkToken: string | null, userId: strin
     
     // Somar presenças e ausências
     const desempenho = p.desempenho || [];
-    const presencas = desempenho.reduce((acc: number, d: any) => acc + (d.presencas || 0), 0);
-    const ausencias = desempenho.reduce((acc: number, d: any) => acc + (d.ausencias_nao_justificadas || 0), 0);
+    const presencas = (desempenho as unknown as any[]).reduce((acc: number, d) => acc + (d.valor_total || 0), 0);
+    const ausencias = (desempenho as unknown as any[]).reduce((acc: number, d) => acc + (d.ausencias_nao_justificadas || 0), 0);
     
     const total = presencas + ausencias;
     const presenca_pct = total > 0 ? Math.round((presencas / total) * 100) : 0;
@@ -178,7 +180,7 @@ export async function getUserFavoriteIds(_clerkToken: string | null, userId: str
     return [];
   }
 
-  return (data as any[] || []).map(f => f.politico_id);
+  return (data as unknown as { politico_id: string }[] || []).map(f => f.politico_id);
 }
 
 /**
@@ -228,7 +230,7 @@ export async function toggleFavorite(_clerkToken: string | null, userId: string,
  */
 export async function getFavoritesFeed(_clerkToken: string | null, userId: string) {
   const favoritos = await getUserFavorites(null, userId);
-  const ids = favoritos.map((f: any) => f.id);
+  const ids = favoritos.map((f) => f.id);
 
   if (ids.length === 0) return [];
 
@@ -247,7 +249,7 @@ export async function getFavoritesFeed(_clerkToken: string | null, userId: strin
     return [];
   }
 
-  return data.map((p: any) => ({
+  return (data as unknown as any[] || []).map((p) => ({
     id: p.id,
     politico: {
       nome: p.politicos.nome_urna,

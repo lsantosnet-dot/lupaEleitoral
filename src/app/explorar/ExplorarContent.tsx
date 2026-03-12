@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Heart, Search, X, Check, FilterX } from "lucide-react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { useAuth, useUser } from "@clerk/nextjs"
+import { useUser } from "@clerk/nextjs"
 import { Politico, toggleFavorite } from "@/lib/queries"
 import { cn } from "@/lib/utils"
 import { PoliticoCard } from "@/components/PoliticoCard"
@@ -21,7 +21,6 @@ interface ExplorarContentProps {
 }
 
 export function ExplorarContent({ initialPoliticos, initialFavoriteIds = [] }: ExplorarContentProps) {
-  const { getToken } = useAuth()
   const { user } = useUser()
   const searchParams = useSearchParams()
   const defaultTab = searchParams.get('cargo') === 'senador' ? 'senadores' : 'deputados'
