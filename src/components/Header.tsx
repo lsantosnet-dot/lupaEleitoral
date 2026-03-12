@@ -6,6 +6,7 @@ import { useUser, useClerk, SignOutButton } from "@clerk/nextjs"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription, SheetClose } from "@/components/ui/sheet"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { useLoading } from "./LoadingProvider"
 
 import { usePathname } from "next/navigation"
 
@@ -13,6 +14,7 @@ export function Header() {
   const { user } = useUser()
   const { signOut } = useClerk()
   const pathname = usePathname()
+  const { startLoading } = useLoading()
 
   if (pathname === '/sign-in' || pathname === '/sign-up') {
     return null;
@@ -50,7 +52,7 @@ export function Header() {
                   </Avatar>
                   <h3 className="font-semibold text-lg text-slate-900">{user.fullName}</h3>
                   <p className="text-sm text-slate-500 mt-1">{user.primaryEmailAddress?.emailAddress}</p>
-                  <span className="text-[10px] text-slate-400 mt-2 font-medium bg-slate-100 px-2 py-0.5 rounded-full">v1.0.17</span>
+                  <span className="text-[10px] text-slate-400 mt-2 font-medium bg-slate-100 px-2 py-0.5 rounded-full">v1.0.18</span>
                 </div>
               )}
 
@@ -60,6 +62,11 @@ export function Header() {
                   <SheetClose key={tab.path} nativeButton={false} render={
                     <Link
                       href={tab.path}
+                      onClick={() => {
+                        if (pathname !== tab.path) {
+                          startLoading()
+                        }
+                      }}
                       className="flex w-full items-center space-x-3 px-4 py-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition-colors"
                     >
                       <tab.icon className="h-5 w-5 text-slate-500" />
@@ -86,7 +93,7 @@ export function Header() {
             </SheetContent>
           </Sheet>
 
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/" onClick={() => pathname !== "/" && startLoading()} className="flex items-center space-x-2">
             <div className="bg-primary p-1.5 rounded-lg flex items-center justify-center">
               <Search className="h-5 w-5 text-white" />
             </div>

@@ -3,9 +3,11 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Home, LineChart, Compass, Bell, User } from "lucide-react"
+import { useLoading } from "./LoadingProvider"
 
 export function BottomNav() {
   const pathname = usePathname()
+  const { startLoading } = useLoading()
 
   if (pathname === '/sign-in' || pathname === '/sign-up') {
     return null;
@@ -28,6 +30,11 @@ export function BottomNav() {
             <Link
               key={tab.path}
               href={tab.path}
+              onClick={() => {
+                if (pathname !== tab.path) {
+                  startLoading()
+                }
+              }}
               className={`flex flex-col items-center justify-center w-full min-h-[50px] space-y-1 ${
                 isActive ? "text-primary font-medium" : "text-slate-500 hover:text-slate-900"
               }`}
