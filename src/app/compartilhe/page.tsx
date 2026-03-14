@@ -77,10 +77,20 @@ export default function CompartilhePage() {
               <CardContent className="p-4 space-y-4">
                 <div className="flex gap-4 items-start">
                   <div className="bg-slate-100 rounded-xl p-2.5 shrink-0">
-                    <MoreVertical className="h-5 w-5 text-slate-600" />
+                    <Monitor className="h-5 w-5 text-slate-600" />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-bold text-slate-900 leading-tight mb-1">Passo 1</p>
+                    <p className="text-sm text-slate-600">Acesse o APP: <a href="https://lupa-eleitoral.vercel.app/" className="text-primary font-bold underline">lupa-eleitoral.vercel.app</a></p>
+                  </div>
+                </div>
+                <div className="h-px bg-slate-50 w-full" />
+                <div className="flex gap-4 items-start">
+                  <div className="bg-slate-100 rounded-xl p-2.5 shrink-0">
+                    <MoreVertical className="h-5 w-5 text-slate-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-slate-900 leading-tight mb-1">Passo 2</p>
                     <p className="text-sm text-slate-600">No topo do navegador Chrome, toque nos três pontinhos <span className="font-bold">⋮</span>.</p>
                   </div>
                 </div>
@@ -90,7 +100,7 @@ export default function CompartilhePage() {
                     <Smartphone className="h-5 w-5 text-slate-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-bold text-slate-900 leading-tight mb-1">Passo 2</p>
+                    <p className="text-sm font-bold text-slate-900 leading-tight mb-1">Passo 3</p>
                     <p className="text-sm text-slate-600">Selecione <span className="font-bold">Instalar aplicativo</span> ou <span className="font-bold">Adicionar à tela inicial</span>.</p>
                   </div>
                 </div>
@@ -103,10 +113,20 @@ export default function CompartilhePage() {
               <CardContent className="p-4 space-y-4">
                 <div className="flex gap-4 items-start">
                   <div className="bg-slate-100 rounded-xl p-2.5 shrink-0">
-                    <Share className="h-5 w-5 text-slate-600" />
+                    <Monitor className="h-5 w-5 text-slate-600" />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-bold text-slate-900 leading-tight mb-1">Passo 1</p>
+                    <p className="text-sm text-slate-600">Acesse o APP: <a href="https://lupa-eleitoral.vercel.app/" className="text-primary font-bold underline">lupa-eleitoral.vercel.app</a></p>
+                  </div>
+                </div>
+                <div className="h-px bg-slate-50 w-full" />
+                <div className="flex gap-4 items-start">
+                  <div className="bg-slate-100 rounded-xl p-2.5 shrink-0">
+                    <Share className="h-5 w-5 text-slate-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-slate-900 leading-tight mb-1">Passo 2</p>
                     <p className="text-sm text-slate-600">Na barra inferior do Safari, toque no ícone de <span className="font-bold">Compartilhar</span> (quadrado com uma seta).</p>
                   </div>
                 </div>
@@ -116,7 +136,7 @@ export default function CompartilhePage() {
                     <PlusSquare className="h-5 w-5 text-slate-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-bold text-slate-900 leading-tight mb-1">Passo 2</p>
+                    <p className="text-sm font-bold text-slate-900 leading-tight mb-1">Passo 3</p>
                     <p className="text-sm text-slate-600">Role a lista e toque em <span className="font-bold">Adicionar à Tela de Início</span>.</p>
                   </div>
                 </div>
@@ -150,7 +170,7 @@ export default function CompartilhePage() {
 
       <div className="text-center">
         <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">
-          Transparência & Democracia • v1.0.28
+          Transparência & Democracia • v1.1.1
         </p>
       </div>
     </div>
