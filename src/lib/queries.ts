@@ -261,3 +261,96 @@ export async function getFavoritesFeed(_clerkToken: string | null, userId: strin
     tempo: new Date(p.data_apresentacao).toLocaleDateString('pt-BR')
   }));
 }
+
+/**
+ * Busca a contagem de notificações não lidas
+ */
+export async function getUnreadNotificationsCount(userId: string) {
+  const { count, error } = await supabasePublic
+    .from('alerta_parlamentar_favorito')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('lido', 'N');
+
+  if (error) {
+    console.error("Erro ao buscar contagem de notificações:", error);
+    return 0;
+  }
+
+  return count || 0;
+}
+
+/**
+ * Busca a lista de notificações com detalhes do projeto e político
+ */
+export async function getNotifications(userId: string) {
+  const { data, error } = await supabasePublic
+    .from('alerta_parlamentar_favorito')
+    .select(`
+      id,
+      lido,
+      created_at,
+      projetos:Projetos_Lei_Recentes (
+        id,
+        titulo,
+        resumo_ia,
+        politicos (
+          nome_urna,
+          foto_url
+        )
+      )
+    `)
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("Erro ao buscar notificações:", error);
+    return [];
+  }
+
+  return (data as any[]).map(n => ({
+    id: n.id,
+    lido: n.lido,
+    data: n.created_at,
+    projeto_id: n.projetos?.id,
+    titulo: n.projetos?.titulo,
+    resumo_ia: n.projetos?.resumo_ia,
+    politico_nome: n.projetos?.politicos?.nome_urna,
+    politico_foto: n.projetos?.politicos?.foto_url
+  }));
+}
+
+/**
+ * Marca uma notificação como lida
+ */
+export async function markNotificationAsRead(notificationId: string) {
+  const { error } = await supabasePublic
+    .from('alerta_parlamentar_favorito')
+    .update({ lido: 'S' })
+    .eq('id', notificationId);
+
+  if (error) {
+    console.error("Erro ao marcar notificação como lida:", error);
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Marca todas as notificações de um usuário como lidas
+ */
+export async function markAllNotificationsAsRead(userId: string) {
+  const { error } = await supabasePublic
+    .from('alerta_parlamentar_favorito')
+    .update({ lido: 'S' })
+    .eq('user_id', userId)
+    .eq('lido', 'N');
+
+  if (error) {
+    console.error("Erro ao marcar todas notificações como lidas:", error);
+    return false;
+  }
+
+  return true;
+}

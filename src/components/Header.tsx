@@ -9,12 +9,49 @@ import { Button } from "@/components/ui/button"
 import { useLoading } from "./LoadingProvider"
 
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
+import { getUnreadNotificationsCount } from "@/lib/queries"
+import { supabasePublic } from "@/lib/supabase"
 
 export function Header() {
   const { user } = useUser()
   const { signOut } = useClerk()
   const pathname = usePathname()
   const { startLoading } = useLoading()
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  // Busca inicial e inscrição em tempo real para notificações
+  useEffect(() => {
+    if (!user) return
+
+    const fetchCount = async () => {
+      const count = await getUnreadNotificationsCount(user.id)
+      setUnreadCount(count)
+    }
+
+    fetchCount()
+
+    // Inscreve para mudanças na tabela de alertas
+    const channel = supabasePublic
+      .channel('notificacoes_realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'alerta_parlamentar_favorito',
+          filter: `user_id=eq.${user.id}`
+        },
+        () => {
+          fetchCount()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabasePublic.removeChannel(channel)
+    }
+  }, [user])
 
   if (pathname === '/sign-in' || pathname === '/sign-up') {
     return null;
@@ -52,7 +89,7 @@ export function Header() {
                   </Avatar>
                   <h3 className="font-semibold text-lg text-slate-900">{user.fullName}</h3>
                   <p className="text-sm text-slate-500 mt-1">{user.primaryEmailAddress?.emailAddress}</p>
-                  <span className="text-[10px] text-slate-400 mt-2 font-medium bg-slate-100 px-2 py-0.5 rounded-full">v1.0.25</span>
+                  <span className="text-[10px] text-slate-400 mt-2 font-medium bg-slate-100 px-2 py-0.5 rounded-full">v1.0.26</span>
                 </div>
               )}
 
@@ -104,9 +141,18 @@ export function Header() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <button className="text-slate-500 hover:text-slate-900 transition-colors">
-            <Bell className="h-5 w-5" />
-          </button>
+          <Link
+            href="/alertas"
+            onClick={() => pathname !== "/alertas" && startLoading()}
+            className="text-slate-500 hover:text-slate-900 transition-colors relative"
+          >
+            <Bell className={`h-5 w-5 ${unreadCount > 0 ? 'text-red-500 animate-pulse' : ''}`} />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full border border-white">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </Link>
         </div>
       </div>
     </header>
