@@ -257,8 +257,7 @@ export async function getFavoritesFeed(_clerkToken: string | null, userId: strin
     },
     tipo: 'Projeto de Lei',
     titulo: p.titulo,
-    tempo: new Date(p.data_apresentacao).toLocaleDateString('pt-BR'),
-    likes: 0, // Mockado por enquanto
-    comments: 0 // Mockado por enquanto
+    resumo_ia: p.resumo_ia,
+    tempo: new Date(p.data_apresentacao).toLocaleDateString('pt-BR')
   }));
 }
