@@ -290,11 +290,11 @@ export async function getNotifications(userId: string) {
       id,
       lido,
       created_at,
-      projetos:Projetos_Lei_Recentes (
+      projeto:projeto_lei_id (
         id,
         titulo,
         resumo_ia,
-        politicos (
+        politico:politico_id (
           nome_urna,
           foto_url
         )
@@ -308,15 +308,15 @@ export async function getNotifications(userId: string) {
     return [];
   }
 
-  return (data as any[]).map(n => ({
+  return (data || []).map((n: any) => ({
     id: n.id,
     lido: n.lido,
     data: n.created_at,
-    projeto_id: n.projetos?.id,
-    titulo: n.projetos?.titulo,
-    resumo_ia: n.projetos?.resumo_ia,
-    politico_nome: n.projetos?.politicos?.nome_urna,
-    politico_foto: n.projetos?.politicos?.foto_url
+    projeto_id: n.projeto?.id,
+    titulo: n.projeto?.titulo,
+    resumo_ia: n.projeto?.resumo_ia,
+    politico_nome: n.projeto?.politico?.nome_urna,
+    politico_foto: n.projeto?.politico?.foto_url
   }));
 }
 
