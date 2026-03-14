@@ -19,7 +19,7 @@ interface Notification {
   id: string
   lido: string
   data: string
-  proyecto_id: string
+  projeto_id: string
   titulo: string
   resumo_ia: string | null
   politico_nome: string
