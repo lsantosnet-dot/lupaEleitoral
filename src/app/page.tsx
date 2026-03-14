@@ -43,13 +43,20 @@ export default async function Home() {
       </section>
 
       {/* Apoie o projeto link */}
-      <div className="flex justify-center -mt-2">
+      <div className="flex justify-center items-center gap-3 -mt-2">
         <Link 
           href="/apoie" 
           className="text-[10px] text-slate-400 hover:text-primary transition-colors flex items-center gap-1.5"
         >
           <span className="h-1 w-1 rounded-full bg-slate-400" />
           Apoie o projeto
+        </Link>
+        <span className="h-1 w-1 rounded-full bg-slate-300" />
+        <Link 
+          href="/compartilhe" 
+          className="text-[10px] text-slate-400 hover:text-primary transition-colors flex items-center gap-1.5"
+        >
+          Compartilhe a Ideia
         </Link>
       </div>
 

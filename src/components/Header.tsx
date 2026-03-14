@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Bell, Search, Menu, Home, Compass, LineChart, LogOut, User, Heart } from "lucide-react"
+import { Bell, Search, Menu, Home, Compass, LineChart, LogOut, User, Heart, Share2 } from "lucide-react"
 import { useUser, useClerk, SignOutButton } from "@clerk/nextjs"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription, SheetClose } from "@/components/ui/sheet"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -68,6 +68,7 @@ export function Header() {
     { name: "Ranking", path: "/ranking", icon: LineChart },
     { name: "Alertas", path: "/alertas", icon: Bell },
     { name: "Favoritos", path: "/favoritos", icon: User },
+    { name: "Compartilhe a Ideia", path: "/compartilhe", icon: Share2 },
     { name: "Apoie o projeto", path: "/apoie", icon: Heart },
   ]
 
@@ -94,7 +95,7 @@ export function Header() {
                   </Avatar>
                   <h3 className="font-semibold text-lg text-slate-900">{user.fullName}</h3>
                   <p className="text-sm text-slate-500 mt-1">{user.primaryEmailAddress?.emailAddress}</p>
-                  <span className="text-[10px] text-slate-400 mt-2 font-medium bg-slate-100 px-2 py-0.5 rounded-full">v1.0.28</span>
+                  <span className="text-[10px] text-slate-400 mt-2 font-medium bg-slate-100 px-2 py-0.5 rounded-full">v1.1.1</span>
                 </div>
               )}
 
