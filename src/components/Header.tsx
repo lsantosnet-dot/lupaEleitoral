@@ -31,6 +31,10 @@ export function Header() {
 
     fetchCount()
 
+    // Listener para atualização forçada (quando o usuário marca como lido em outra tela)
+    const handleManualUpdate = () => fetchCount()
+    window.addEventListener('lupa:updateNotifications', handleManualUpdate)
+
     // Inscreve para mudanças na tabela de alertas
     const channel = supabasePublic
       .channel('notificacoes_realtime')
@@ -50,6 +54,7 @@ export function Header() {
 
     return () => {
       supabasePublic.removeChannel(channel)
+      window.removeEventListener('lupa:updateNotifications', handleManualUpdate)
     }
   }, [user])
 
@@ -89,7 +94,7 @@ export function Header() {
                   </Avatar>
                   <h3 className="font-semibold text-lg text-slate-900">{user.fullName}</h3>
                   <p className="text-sm text-slate-500 mt-1">{user.primaryEmailAddress?.emailAddress}</p>
-                  <span className="text-[10px] text-slate-400 mt-2 font-medium bg-slate-100 px-2 py-0.5 rounded-full">v1.0.27</span>
+                  <span className="text-[10px] text-slate-400 mt-2 font-medium bg-slate-100 px-2 py-0.5 rounded-full">v1.0.28</span>
                 </div>
               )}
 

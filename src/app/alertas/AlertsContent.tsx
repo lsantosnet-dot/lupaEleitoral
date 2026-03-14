@@ -44,6 +44,7 @@ export function AlertsContent({ userId, initialNotifications }: AlertsContentPro
     const success = await markNotificationAsRead(id)
     if (success) {
       setNotifications(prev => prev.filter(n => n.id !== id))
+      window.dispatchEvent(new CustomEvent('lupa:updateNotifications'))
     }
   }
 
@@ -51,6 +52,7 @@ export function AlertsContent({ userId, initialNotifications }: AlertsContentPro
     const success = await markAllNotificationsAsRead(userId)
     if (success) {
       setNotifications([])
+      window.dispatchEvent(new CustomEvent('lupa:updateNotifications'))
     }
   }
 
