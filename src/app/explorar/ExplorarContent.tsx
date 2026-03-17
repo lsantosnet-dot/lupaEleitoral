@@ -111,7 +111,7 @@ export function ExplorarContent({ initialPoliticos, initialFavoriteIds = [] }: E
     });
   }
 
-  const deputados = getFilteredAndSortedPoliticos("deputado")
+  const deputados = getFilteredAndSortedPoliticos("deputado federal")
   const senadores = getFilteredAndSortedPoliticos("senador")
 
   const renderList = (list: Politico[]) => {

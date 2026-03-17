@@ -8,7 +8,7 @@ export interface Politico {
   id_camara_senado: number | null;
   cpf: string;
   nome_urna: string;
-  cargo_atual: 'Deputado' | 'Senador' | 'Nenhum';
+  cargo_atual: 'Deputado Federal' | 'Senador' | 'Nenhum';
   partido_atual: string | null;
   uf: string | null;
   foto_url: string | null;
@@ -103,11 +103,11 @@ export async function getPoliticoById(id: string) {
 }
 
 /**
- * Busca os destaques (Mais assíduos e Maiores Gastadores)
+ * Helper para buscar e ordenar políticos por assiduidade ou despesa
  */
-export async function getHighlights() {
-  const politicos = await getPoliticos();
-  
+async function getFilteredAndSortedPoliticos(cargo: 'deputado federal' | 'senador') {
+  const politicos = await getPoliticos(cargo);
+
   const assiduos = [...politicos]
     .sort((a, b) => (b.presenca_pct || 0) - (a.presenca_pct || 0))
     .slice(0, 2);
@@ -117,6 +117,21 @@ export async function getHighlights() {
     .slice(0, 2);
 
   return { assiduos, gastadores };
+}
+
+/**
+ * Busca os destaques (Mais assíduos e Maiores Gastadores)
+ */
+export async function getHighlights() {
+  const deputados = await getFilteredAndSortedPoliticos("deputado federal");
+  const senadores = await getFilteredAndSortedPoliticos("senador");
+
+  return {
+    deputadosAssiduos: deputados.assiduos,
+    deputadosGastadores: deputados.gastadores,
+    senadoresAssiduos: senadores.assiduos,
+    senadoresGastadores: senadores.gastadores,
+  };
 }
 
 /**
@@ -131,7 +146,7 @@ export async function getUserFavorites(_clerkToken: string | null, userId: strin
     .select(`
       politico_id,
       politicos (
-        *,
+        id, id_camara_senado, cpf, nome_urna, cargo_atual, partido_atual, uf, foto_url, tags_ia,
         despesas:despesas_mensais_consolidadas(valor_total),
         desempenho:desempenho_plenario(presencas, ausencias_nao_justificadas)
       )

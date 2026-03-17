@@ -8,7 +8,7 @@ import Link from "next/link"
 export const dynamic = 'force-dynamic'
 
 export default async function Home() {
-  const { assiduos, gastadores } = await getHighlights()
+  const { deputadosAssiduos, deputadosGastadores } = await getHighlights()
 
   return (
     <div className="flex flex-col gap-6 p-4">
@@ -67,7 +67,7 @@ export default async function Home() {
         <h2 className="text-lg font-semibold mb-3">Acesso Rápido</h2>
         <div className="grid grid-cols-2 gap-4">
           <Link 
-            href="/explorar?cargo=deputado" 
+            href="/explorar?cargo=deputado federal" 
             className="group relative h-32 overflow-hidden rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
           >
             <img 
@@ -113,7 +113,7 @@ export default async function Home() {
               <CardTitle className="text-md">Mais Assíduos</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0 flex flex-col gap-3">
-              {assiduos.map((p: any) => (
+              {deputadosAssiduos.map((p: any) => (
                 <Link href={`/perfil/${p.id}`} key={p.id} className="flex gap-3 items-center group">
                   <Avatar className="h-10 w-10 border border-slate-100 shadow-sm">
                     <AvatarImage src={p.foto_url || ''} />
@@ -136,7 +136,7 @@ export default async function Home() {
               <CardTitle className="text-md">Maiores Gastos</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0 flex flex-col gap-3">
-               {gastadores.map((p: any) => (
+               {deputadosGastadores.map((p: any) => (
                 <Link href={`/perfil/${p.id}`} key={p.id} className="flex gap-3 items-center group">
                   <Avatar className="h-10 w-10 border border-slate-100 shadow-sm">
                     <AvatarImage src={p.foto_url || ''} />
