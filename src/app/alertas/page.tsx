@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import { getNotifications } from '@/lib/queries'
 import { AlertsContent } from './AlertsContent'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AlertasPage() {
   const user = await currentUser()
 

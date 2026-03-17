@@ -1,5 +1,6 @@
 import { Suspense } from "react"
 import { getPoliticos, getUserFavoriteIds } from "@/lib/queries"
+export const dynamic = 'force-dynamic'
 import { currentUser } from "@clerk/nextjs/server"
 import { ExplorarContent } from "./ExplorarContent"
 

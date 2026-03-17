@@ -1,9 +1,11 @@
 import { getHighlights } from "@/lib/queries"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+
+export const dynamic = 'force-dynamic'
 
 export default async function Home() {
   const { assiduos, gastadores } = await getHighlights()
@@ -111,7 +113,7 @@ export default async function Home() {
               <CardTitle className="text-md">Mais Assíduos</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0 flex flex-col gap-3">
-              {assiduos.map(p => (
+              {assiduos.map((p: any) => (
                 <Link href={`/perfil/${p.id}`} key={p.id} className="flex gap-3 items-center group">
                   <Avatar className="h-10 w-10 border border-slate-100 shadow-sm">
                     <AvatarImage src={p.foto_url || ''} />
@@ -134,7 +136,7 @@ export default async function Home() {
               <CardTitle className="text-md">Maiores Gastos</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0 flex flex-col gap-3">
-               {gastadores.map(p => (
+               {gastadores.map((p: any) => (
                 <Link href={`/perfil/${p.id}`} key={p.id} className="flex gap-3 items-center group">
                   <Avatar className="h-10 w-10 border border-slate-100 shadow-sm">
                     <AvatarImage src={p.foto_url || ''} />
